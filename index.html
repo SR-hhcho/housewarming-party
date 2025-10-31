@@ -32,31 +32,29 @@
       font-family: Inter, "Noto Sans KR", system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, "Malgun Gothic", sans-serif;
       letter-spacing: -0.2px;
     }
-    .app{ max-width: 620px; margin: 0 auto; padding: 12px 12px 96px; }
+    .app{ max-width: 600px; margin: 0 auto; padding: 10px 10px 96px; }
 
     /* Header */
     .header{ position: sticky; top:0; z-index: 20; backdrop-filter: blur(8px);
       background: linear-gradient(180deg, rgba(11,12,16,.85), rgba(11,12,16,.55));
-      padding: 14px 16px; margin: -12px -12px 12px; border-bottom: 1px solid rgba(255,255,255,.06);
-      display:flex; align-items:center; justify-content:center; position: sticky; }
+      padding: 12px 12px; margin: -10px -10px 10px; border-bottom: 1px solid rgba(255,255,255,.06);
+      display:flex; align-items:center; justify-content:center; }
     .title{ font-weight: 800; letter-spacing: -0.5px; cursor:pointer; display:inline-flex; align-items:center; gap:10px; }
     .title span{ background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip:text; color: transparent; }
     .badge{ position:absolute; right:10px; top:10px; font-size: 11px; padding: 6px 10px; border-radius: 999px; background: rgba(124,58,237,.15); color:#d8c8ff; border:1px solid rgba(255,255,255,.1); }
+    .bgbtn{ position:absolute; left:10px; top:10px; font-size: 12px; padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,.06); color:var(--text); border:1px solid rgba(255,255,255,.1); cursor:pointer; font-weight:700; }
 
     /* Hint */
     .hint{ font-size:12px; color:var(--muted); margin: 0 2px 10px; font-family: inherit; }
 
-    /* Current Tab label */
-    .curtab{ display:none; }
-
     /* Tab hero (아이콘 틀) */
-    .hero{ display:flex; align-items:center; gap:10px; margin: 6px 2px 12px; }
+    .hero{ display:flex; align-items:center; gap:10px; margin: 4px 2px 10px; }
     .hero .icwrap{ width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); }
     .hero .hlabel{ font-weight:800; letter-spacing:-.2px; opacity:.92; }
 
     /* Card */
     .card{ background: linear-gradient(180deg, var(--card), var(--card-2)); border:1px solid rgba(255,255,255,.06);
-      border-radius: var(--radius); padding:14px; box-shadow: var(--shadow); }
+      border-radius: var(--radius); padding:12px; box-shadow: var(--shadow); }
 
     /* Input Row */
     .row{ display:flex; gap:8px; align-items: stretch; }
@@ -73,8 +71,8 @@
     .btn.secondary{ background:#0f1117; border:1px solid rgba(255,255,255,.14); box-shadow:none; font-weight:600; }
 
     /* List */
-    .list{ display:flex; flex-direction:column; gap:10px; margin-top:12px; }
-    .item{ display:flex; flex-direction:column; gap:6px; padding:12px; border:1px solid rgba(255,255,255,.06); border-radius: 14px; background: rgba(255,255,255,.02); }
+    .list{ display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+    .item{ display:flex; flex-direction:column; gap:6px; padding:10px; border:1px solid rgba(255,255,255,.06); border-radius: 14px; background: rgba(255,255,255,.02); }
     .toprow{ display:flex; align-items:center; gap:10px; }
     .item .txt{ flex:1; font-weight:700; }
     .item .desc{ display:none; color:var(--muted); white-space:pre-wrap; line-height:1.5; }
@@ -84,17 +82,17 @@
     .heart{ display:flex; gap:6px; align-items:center; border:1px solid rgba(255,255,255,.10); padding:8px 10px; border-radius:12px; cursor:pointer; }
     .heart[data-liked="true"]{ background: rgba(124,58,237,.18); border-color: rgba(124,58,237,.45); }
     .del{ border:1px solid rgba(255,255,255,.10); padding:8px 10px; border-radius:12px; cursor:pointer; }
-    .del:hover{ border-color: rgba(255,255,255,.25); }
 
     /* Top 3 grid */
-    .grid{ display:grid; grid-template-columns: 1fr; gap:12px; }
-    @media (min-width: 560px){ .app{max-width: 680px;} .grid{ grid-template-columns: 1fr 1fr; } }
+    .grid{ display:grid; grid-template-columns: 1fr; gap:10px; }
+    @media (min-width: 560px){ .app{max-width: 660px;} .grid{ grid-template-columns: 1fr 1fr; } }
 
     /* Bottom Tabs */
-    .tabs{ position: fixed; bottom: 12px; left: 0; right: 0; z-index: 30; display:flex; justify-content:center; pointer-events:none; }
-    .tabs-inner{ pointer-events:auto; display:flex; gap:10px; background: rgba(20,22,28,.85); border:1px solid rgba(255,255,255,.08); padding:8px; border-radius: 20px; backdrop-filter: blur(8px); box-shadow: var(--shadow); }
-    .tab{ flex:1; min-width: 72px; text-align:center; padding:10px 12px; border-radius:14px; color:var(--muted); font-weight:700; cursor:pointer; border:1px solid transparent; font-family: inherit; }
+    .tabs{ position: fixed; bottom: 10px; left: 0; right: 0; z-index: 30; display:flex; justify-content:center; }
+    .tabs-inner{ display:flex; gap:8px; background: rgba(20,22,28,.85); border:1px solid rgba(255,255,255,.08); padding:8px; border-radius: 20px; backdrop-filter: blur(8px); box-shadow: var(--shadow); }
+    .tab{ flex:1; min-width: 72px; text-align:center; padding:10px 12px; border-radius:14px; color:var(--muted); font-weight:700; cursor:pointer; border:1px solid transparent; font-family: inherit; user-select:none; }
     .tab.active{ color:var(--text); background: rgba(124,58,237,.16); border-color: rgba(124,58,237,.35); }
+    .tab:focus{ outline: 2px solid rgba(124,58,237,.6); }
 
     /* Modal */
     .modal{ position: fixed; inset:0; display:none; place-items:center; background: rgba(0,0,0,.6); z-index: 50; }
@@ -105,7 +103,7 @@
     .sub{ color:var(--muted); margin-top:10px; font-size:13px; }
 
     /* Toast */
-    .toast{ position: fixed; bottom: 78px; left:50%; transform: translateX(-50%); background: #111827; color:#e5e7eb; border:1px solid rgba(255,255,255,.10); padding:10px 14px; border-radius:12px; display:none; z-index: 60; box-shadow: var(--shadow); }
+    .toast{ position: fixed; bottom: 76px; left:50%; transform: translateX(-50%); background: #111827; color:#e5e7eb; border:1px solid rgba(255,255,255,.10); padding:10px 14px; border-radius:12px; display:none; z-index: 60; box-shadow: var(--shadow); }
     .toast.show{ display:block; }
 
     /* Confetti canvas */
@@ -115,7 +113,8 @@
 <body>
   <canvas id="confetti"></canvas>
   <div class="header">
-    <div class="title" id="titleBtn" aria-label="항현이 집들이">
+    <button class="bgbtn" id="bgToggle" aria-pressed="false">배경</button>
+    <div class="title" id="titleBtn" role="button" tabindex="0" aria-label="항현이 집들이">
       <span>항현이 집들이</span>
     </div>
     <div class="badge">Party Mode ✦</div>
@@ -123,28 +122,31 @@
 
   <div class="app">
     <div class="hero" id="hero">
-      <div class="icwrap" id="heroIcon">🍽️</div>
-      <div class="hlabel" id="heroLabel">음식</div>
+      <div class="icwrap" id="heroIcon">🏆</div>
+      <div class="hlabel" id="heroLabel">순위</div>
     </div>
     <div class="hint">각 항목을 클릭하면 설명을 볼 수 있습니다.</div>
 
     <!-- Composer -->
-    <div class="card" id="composer">
-      <div class="row" style="margin-bottom:10px;">
-        <input id="newText" class="grow" type="text" maxlength="72" placeholder="제목 (예: 삼겹살 / 마라탕 / 포커 / 설거지 담당)" />
+    <div class="card" id="composer" style="display:none;">
+      <div class="row" style="margin-bottom:8px;">
+        <input id="newText" class="grow" type="text" maxlength="72" placeholder="항목" />
         <button class="btn" id="addBtn">등록</button>
       </div>
-      <div class="row wrap" style="gap:10px;">
+      <div class="row wrap" style="gap:8px;">
         <textarea id="newDesc" class="grow" placeholder="간단설명 (선택)"></textarea>
       </div>
-      <div style="font-size:12px; color:var(--muted); margin-top:6px;">등록 시 4자리 비밀번호를 입력하는 팝업이 뜹니다. 이 비밀번호는 삭제할 때 사용돼요.</div>
+      <div style="font-size:12px; color:var(--muted); margin-top:6px; line-height:1.4;">
+        등록 시 4자리 비밀번호를 입력하는 팝업이 뜹니다.<br/>
+        이 비밀번호는 삭제할 때 사용돼요.
+      </div>
     </div>
 
     <!-- Lists -->
-    <div class="list" id="list"></div>
+    <div class="list" id="list" style="display:none;"></div>
 
     <!-- Rank (Top 3) -->
-    <div id="rank" style="display:none; margin-top:10px;">
+    <div id="rank" style="display:block; margin-top:10px;">
       <div class="grid">
         <div class="card"><h3 style="margin:0 0 8px;">🍽️ 음식 Top 3</h3><div id="r-food"></div></div>
         <div class="card"><h3 style="margin:0 0 8px;">🎮 게임 Top 3</h3><div id="r-game"></div></div>
@@ -156,10 +158,10 @@
   <!-- Bottom Tabs -->
   <div class="tabs">
     <div class="tabs-inner">
-      <div class="tab active" data-tab="food">🍽️ 음식</div>
-      <div class="tab" data-tab="game">🎮 게임</div>
-      <div class="tab" data-tab="todo">🧽 할일</div>
-      <div class="tab" data-tab="rank">🏆 순위</div>
+      <div class="tab active" data-tab="rank" role="button" tabindex="0">🏆 순위</div>
+      <div class="tab" data-tab="food" role="button" tabindex="0">🍽️ 음식</div>
+      <div class="tab" data-tab="game" role="button" tabindex="0">🎮 게임</div>
+      <div class="tab" data-tab="todo" role="button" tabindex="0">🧽 할일</div>
     </div>
   </div>
 
@@ -203,25 +205,27 @@
 
     // === State ===
     const state = {
-      tab: 'food',
+      tab: 'rank',
       uid: null,
       items: { food: [], game: [], todo: [] },
       likedSet: new Set(),
       unsub: { food: null, game: null, todo: null, likes: null },
+      confettiOn: false,
     };
 
     // === Render ===
     function render(){
       const heroMap = {
-        food: {icon:'🍽️', label:'음식', placeholder:'간단설명 (선택)'},
-        game: {icon:'🎮', label:'게임', placeholder:'게임방법 간단설명 (선택)'},
-        todo: {icon:'🧽', label:'할일', placeholder:'해야할 일 상세 (선택)'}
+        rank: {icon:'🏆', label:'순위'},
+        food: {icon:'🍽️', label:'음식', placeholder:'항목 (예 : 삼겹살 등)'},
+        game: {icon:'🎮', label:'게임', placeholder:'항목 (예 : 인디언포커 등)'},
+        todo: {icon:'🧽', label:'할일', placeholder:'항목 (예 : 식전 풋살 등)'}
       };
       $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab===state.tab));
-      const h = heroMap[state.tab] || heroMap.food;
+      const h = heroMap[state.tab] || heroMap.rank;
       $('#heroIcon').textContent = h.icon;
       $('#heroLabel').textContent = h.label;
-      $('#newDesc').placeholder = h.placeholder;
+      if(h.placeholder){ $('#newText').placeholder = h.placeholder; $('#newDesc').placeholder = (state.tab==='game'?'게임방법 간단설명 (선택)':'간단설명 (선택)'); }
 
       const isRank = state.tab === 'rank';
       $('#composer').style.display = isRank ? 'none' : 'block';
@@ -257,11 +261,10 @@
       const liked = state.likedSet.has(item.id);
       heart.dataset.liked = liked ? 'true' : 'false';
       heart.innerHTML = liked ? `💜 <b>${item.heart||0}</b>` : `❤️ <b>${item.heart||0}</b>`;
-      heart.setAttribute('aria-label','하트');
       heart.addEventListener('click', (e)=>{ e.stopPropagation(); toggleLike(item); });
 
       const del = document.createElement('button');
-      del.className='del'; del.innerHTML = '🗑️ 삭제';
+      del.className='del'; del.textContent = '🗑️ 삭제';
       del.addEventListener('click', async (e)=>{ e.stopPropagation(); await tryDelete(item); });
 
       actions.append(heart, del);
@@ -290,7 +293,6 @@
     }
 
     // === Firestore Listeners ===
-    import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     function listenCategory(cat){
       if(state.unsub[cat]) state.unsub[cat]();
       const q = query(collection(db,'items'), where('category','==',cat));
@@ -317,7 +319,7 @@
       const descEl = $('#newDesc');
       const text = (input.value||'').trim();
       const desc = (descEl.value||'').trim();
-      if(!text){ toast('제목을 입력해주세요'); return; }
+      if(!text){ toast('항목을 입력해주세요'); return; }
       const pin = prompt('삭제 시 사용할 4자리 비밀번호를 입력해 주세요');
       if(pin===null) return; // cancel
       if(!/^\d{4}$/.test(pin)) { toast('4자리 숫자를 입력하세요'); return; }
@@ -364,13 +366,19 @@
     }
 
     // === Tab / UI wiring ===
-    $('#titleBtn').addEventListener('click', ()=> $('#hipModal').classList.add('open'));
+    function setTab(tab){ state.tab = tab; render(); }
+
+    $('#titleBtn').addEventListener('click', ()=> setTab('rank'));
+    $('#titleBtn').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ setTab('rank'); }});
     $('#hipModal').addEventListener('click', ()=> $('#hipModal').classList.remove('open'));
 
     $('#addBtn').addEventListener('click', addItem);
     $('#newText').addEventListener('keydown', (e)=>{ if(e.key==='Enter') addItem(); });
 
-    $$('.tab').forEach(t=> t.addEventListener('click', ()=>{ state.tab = t.dataset.tab; render(); }));
+    $$('.tab').forEach(t=>{
+      t.addEventListener('click', ()=> setTab(t.dataset.tab));
+      t.addEventListener('keydown', (e)=>{ if(e.key==='Enter') setTab(t.dataset.tab); });
+    });
 
     // Start listeners for all categories so 순위 탭도 항상 최신
     listenCategory('food'); listenCategory('game'); listenCategory('todo');
@@ -382,10 +390,10 @@
     // Initial paint
     render();
 
-    // === Confetti ===
+    // === Confetti (toggle) ===
     const cvs = document.getElementById('confetti');
     const ctx = cvs.getContext('2d');
-    let W, H; function resize(){ W = cvs.width = innerWidth; H = cvs.height = innerHeight; }
+    let W, H, rafId=null; function resize(){ W = cvs.width = innerWidth; H = cvs.height = innerHeight; }
     addEventListener('resize', resize); resize();
     const pieces = Array.from({length: 90}, ()=>({
       x: Math.random()*W,
@@ -402,9 +410,11 @@
         ctx.fillStyle = `hsl(${p.hue} 80% 60%)`;
         ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
       });
-      requestAnimationFrame(step);
+      rafId = requestAnimationFrame(step);
     }
-    step();
+    function startConfetti(){ if(rafId==null){ step(); $('#bgToggle').setAttribute('aria-pressed','true'); } }
+    function stopConfetti(){ if(rafId!=null){ cancelAnimationFrame(rafId); rafId=null; ctx.clearRect(0,0,W,H); $('#bgToggle').setAttribute('aria-pressed','false'); } }
+    $('#bgToggle').addEventListener('click', ()=>{ if(rafId==null) startConfetti(); else stopConfetti(); });
   </script>
 </body>
 </html>
