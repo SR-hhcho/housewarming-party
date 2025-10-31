@@ -66,7 +66,6 @@
     .btn{ border:none; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:white; padding:14px 16px; border-radius: 14px; font-weight:800; letter-spacing:.2px; cursor:pointer; box-shadow: 0 6px 20px rgba(124,58,237,.35); }
     .btn:active{ transform: translateY(1px); }
     .btn.secondary{ background:#0f1117; border:1px solid rgba(255,255,255,.14); box-shadow:none; font-weight:600; }
-    .btn.danger{ background: linear-gradient(135deg, #ef4444, #f97316); box-shadow: 0 6px 20px rgba(239,68,68,.35); }
 
     /* List */
     .list{ display:flex; flex-direction:column; gap:10px; margin-top:12px; }
@@ -167,15 +166,13 @@
   <!-- Firebase + App Script -->
   <script type="module">
     // === ⚡ Firebase (Firestore + Auth) ===
-    // 1) 아래 config에 본인 Firebase 프로젝트 설정을 붙여 넣으세요.
-    //    (Firebase 콘솔 → 프로젝트 만들기 → Web App 추가 → SDK 설정에서 복사)
     const firebaseConfig = {
-      apiKey: "PASTE_YOUR_API_KEY",
-      authDomain: "PASTE_YOUR_AUTH_DOMAIN",
-      projectId: "PASTE_YOUR_PROJECT_ID",
-      storageBucket: "PASTE_YOUR_STORAGE_BUCKET",
-      messagingSenderId: "PASTE_YOUR_SENDER_ID",
-      appId: "PASTE_YOUR_APP_ID"
+      apiKey: "AIzaSyDaiXlINciVbsqUFqDyBbTzAQZQQ3mGk4M",
+      authDomain: "hhcho-housewarming-party.firebaseapp.com",
+      projectId: "hhcho-housewarming-party",
+      storageBucket: "hhcho-housewarming-party.firebasestorage.app",
+      messagingSenderId: "467490140542",
+      appId: "1:467490140542:web:111c6fc888a1994d37832f"
     };
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -214,7 +211,7 @@
 
       if(!isRank){
         const arr = [...state.items[state.tab]];
-        arr.sort((a,b)=> (b.heart - a.heart) || (a.ts?.toMillis?.() ?? a.ts) - (b.ts?.toMillis?.() ?? b.ts));
+        arr.sort((a,b)=> (b.heart - a.heart) || ((a.ts?.toMillis?.() ?? a.ts) - (b.ts?.toMillis?.() ?? b.ts)));
         const list = $('#list'); list.innerHTML = '';
         arr.forEach(item => list.appendChild(renderItem(item)));
       } else {
@@ -261,7 +258,7 @@
     }
 
     function renderRank(){
-      const topHTML = (arr)=> [...arr].sort((a,b)=> (b.heart - a.heart) || (a.ts?.toMillis?.() ?? a.ts) - (b.ts?.toMillis?.() ?? b.ts))
+      const topHTML = (arr)=> [...arr].sort((a,b)=> (b.heart - a.heart) || ((a.ts?.toMillis?.() ?? a.ts) - (b.ts?.toMillis?.() ?? b.ts)))
         .slice(0,3)
         .map((x,i)=>`<div style="display:flex;align-items:center;gap:10px; margin:6px 0;">
           <div style="width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-weight:800;">${i+1}</div>
@@ -348,7 +345,7 @@
       toast('삭제 완료');
     }
 
-    // === Wiring ===
+    // === Tab / UI wiring ===
     $('#titleBtn').addEventListener('click', ()=> $('#hipModal').classList.add('open'));
     $('#hipModal').addEventListener('click', ()=> $('#hipModal').classList.remove('open'));
 
