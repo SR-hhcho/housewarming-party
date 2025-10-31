@@ -92,6 +92,20 @@
     .toast.show{ display:block; }
 
     #confetti{ position: fixed; inset:0; z-index: 0; pointer-events:none; }
+
+    /* Simple modal */
+    .modal{ position: fixed; inset:0; display:none; place-items:center; background: rgba(0,0,0,.6); z-index: 60; }
+    .modal.open{ display:grid; }
+    .sheet{ background: #0f1117; border:1px solid rgba(255,255,255,.1); border-radius: 18px; padding: 18px; min-width: 280px; box-shadow: var(--shadow); }
+    .grid4{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .sbtn{ padding:12px; border-radius: 12px; background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:var(--text); font-weight:800; text-align:center; cursor:pointer; }
+
+    /* PIN modal */
+    .pinbox{ display:flex; flex-direction:column; gap:10px; }
+    .pinbox h4{ margin:0 0 2px; font-size:16px; }
+    .pininput{ width:100%; background:#0b0e14; color:var(--text); border:1px solid rgba(255,255,255,.15); padding:12px; border-radius:12px; font-size:16px; text-align:center; }
+    .rowr{ display:flex; gap:10px; }
+    .rowr .sbtn{ flex:1; }
   </style>
 </head>
 <body>
@@ -147,6 +161,30 @@
 
   <div class="toast" id="toast"></div>
 
+  <!-- Tab menu modal -->
+  <div class="modal" id="tabMenu">
+    <div class="sheet">
+      <div class="grid4">
+        <div class="sbtn" data-go="rank">🏆 순위</div>
+        <div class="sbtn" data-go="food">🍽️ 음식</div>
+        <div class="sbtn" data-go="game">🎮 게임</div>
+        <div class="sbtn" data-go="todo">🧽 할일</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIN modal (custom) -->
+  <div class="modal" id="pinModal">
+    <div class="sheet pinbox">
+      <h4 id="pinMsg">삭제 시 사용할 4자리 비밀번호를 입력해 주세요.</h4>
+      <input id="pinInput" class="pininput" type="tel" inputmode="numeric" maxlength="4" placeholder="4자리" />
+      <div class="rowr">
+        <div class="sbtn" id="pinCancel">취소</div>
+        <div class="sbtn" id="pinOk">확인</div>
+      </div>
+    </div>
+  </div>
+
   <script type="module">
     // Firebase
     const firebaseConfig = {
@@ -170,6 +208,19 @@
     const toast = m=>{ const t=$('#toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600); };
     const esc = t=>(t||'').replace(/[&<>"']/g,s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[s]));
     async function sha256Hex(str){ const enc=new TextEncoder().encode(str); const buf=await crypto.subtle.digest('SHA-256',enc); return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join(''); }
+
+    // Custom PIN prompt (to avoid browser origin text)
+    function askPin(message){
+      return new Promise(resolve=>{
+        const modal=$('#pinModal'); const msg=$('#pinMsg'); const input=$('#pinInput');
+        msg.textContent=message; input.value=''; modal.classList.add('open'); input.focus();
+        const ok=()=>{ modal.classList.remove('open'); resolve(input.value.trim()); cleanup(); };
+        const cancel=()=>{ modal.classList.remove('open'); resolve(null); cleanup(); };
+        const cleanup=()=>{ $('#pinOk').removeEventListener('click',ok); $('#pinCancel').removeEventListener('click',cancel); input.removeEventListener('keydown',onKey); };
+        function onKey(e){ if(e.key==='Enter') ok(); if(e.key==='Escape') cancel(); }
+        $('#pinOk').addEventListener('click',ok); $('#pinCancel').addEventListener('click',cancel); input.addEventListener('keydown',onKey);
+      });
+    }
 
     // State
     const state={ tab:'rank', uid:null, items:{food:[],game:[],todo:[]}, likedSet:new Set(), unsub:{}, confettiOn:false };
@@ -201,32 +252,28 @@
       $('#r-food').innerHTML=top(state.items.food); $('#r-game').innerHTML=top(state.items.game); $('#r-todo').innerHTML=top(state.items.todo);
     }
 
-    // Listeners
+    // Firestore listeners
     function listenCategory(cat){ if(state.unsub[cat]) state.unsub[cat](); const q=query(collection(db,'items'),where('category','==',cat)); state.unsub[cat]=onSnapshot(q,s=>{ const a=[]; s.forEach(d=>a.push({id:d.id,...d.data()})); state.items[cat]=a; render(); }); }
     function listenLikes(){ if(state.unsub.likes) state.unsub.likes(); const ql=query(collection(db,'likes'),where('uid','==',state.uid)); state.unsub.likes=onSnapshot(ql,s=>{ const set=new Set(); s.forEach(d=>set.add(d.data().itemId)); state.likedSet=set; render(); }); }
 
     // Actions
-    async function addItem(){ const text=$('#newText').value.trim(); const desc=$('#newDesc').value.trim(); if(!text){ toast('항목을 입력해주세요'); return; } const pin=prompt('삭제 시 사용할 4자리 비밀번호를 입력해 주세요'); if(pin===null) return; if(!/^\d{4}$/.test(pin)){ toast('4자리 숫자를 입력하세요'); return; } const pinHash=await sha256Hex(pin); const cat=state.tab; await addDoc(collection(db,'items'),{ text, desc, pinHash, heart:0, ts:serverTimestamp(), category:cat }); $('#newText').value=''; $('#newDesc').value=''; toast('등록 완료!'); }
+    async function addItem(){ const text=$('#newText').value.trim(); const desc=$('#newDesc').value.trim(); if(!text){ toast('항목을 입력해주세요'); return; } const pin=await askPin('삭제 시 사용할 4자리 비밀번호를 입력해 주세요.'); if(pin===null) return; if(!/^\d{4}$/.test(pin)){ toast('4자리 숫자를 입력하세요'); return; } const pinHash=await sha256Hex(pin); const cat=state.tab; await addDoc(collection(db,'items'),{ text, desc, pinHash, heart:0, ts:serverTimestamp(), category:cat }); $('#newText').value=''; $('#newDesc').value=''; toast('등록 완료!'); }
 
-    // NEW: Like toggle without transaction using atomic increment
-    async function toggleLike(it){ try{ const likeRef=doc(db,'likes',`${it.id}_${state.uid}`); const itemRef=doc(db,'items',it.id); const likeSnap=await getDoc(likeRef); if(likeSnap.exists()){ await deleteDoc(likeRef); await updateDoc(itemRef,{ heart: increment(-1) }); } else { await addDoc(collection(db,'likes'), { itemId: it.id, uid: state.uid, ts: serverTimestamp() }); await updateDoc(itemRef,{ heart: increment(1) }); } } catch(e){ console.error(e); toast('하트를 반영하지 못했어요. 다시 시도해주세요.'); } }
+    async function toggleLike(it){ try{ const likeId=`${it.id}_${state.uid}`; const likeRef=doc(db,'likes',likeId); const itemRef=doc(db,'items',it.id); const likeSnap=await getDoc(likeRef); if(likeSnap.exists()){ await deleteDoc(likeRef); await updateDoc(itemRef,{ heart: increment(-1) }); } else { await addDoc(collection(db,'likes'), { itemId: it.id, uid: state.uid, ts: serverTimestamp() }); await updateDoc(itemRef,{ heart: increment(1) }); } } catch(e){ console.error(e); toast('하트를 반영하지 못했어요. 다시 시도해주세요.'); } }
 
-    // Admin-aware delete (PIN or admin 1111)
-    async function tryDelete(it){ const pinTry=prompt('해당 항목 비밀번호 (등록 시 설정한 4자리) 또는 관리자 1111'); if(pinTry===null) return; if(!/^\d{4}$/.test(pinTry)){ toast('4자리 숫자를 입력하세요'); return; } if(pinTry!=='1111'){ const hash=await sha256Hex(pinTry); if(hash!==it.pinHash){ toast('비밀번호가 올바르지 않습니다'); return; } } const likesSnap=await getDocs(query(collection(db,'likes'),where('itemId','==',it.id))); await Promise.allSettled(likesSnap.docs.map(d=>deleteDoc(d.ref))); await deleteDoc(doc(db,'items',it.id)); toast('삭제 완료'); }
+    async function tryDelete(it){ const pinTry=await askPin('설정한 비밀번호를 입력해 주세요.'); if(pinTry===null) return; if(!/^\d{4}$/.test(pinTry)){ toast('4자리 숫자를 입력하세요'); return; } if(pinTry!=='1111'){ const hash=await sha256Hex(pinTry); if(hash!==it.pinHash){ toast('비밀번호가 올바르지 않습니다'); return; } } const likesSnap=await getDocs(query(collection(db,'likes'),where('itemId','==',it.id))); await Promise.allSettled(likesSnap.docs.map(d=>deleteDoc(d.ref))); await deleteDoc(doc(db,'items',it.id)); toast('삭제 완료'); }
 
-    // Tabs / Title / BG
+    // Tab menu & wiring
     const setTab=(t)=>{ state.tab=t; render(); };
     $$('.tab').forEach(t=> t.addEventListener('click',()=>setTab(t.dataset.tab)));
     $('#addBtn').addEventListener('click',addItem);
     $('#newText').addEventListener('keydown',e=>{ if(e.key==='Enter') addItem(); });
 
-    // Title opens modal + goes to rank
-    $('#titleBtn').addEventListener('click',()=>{ setTab('rank'); openModal(); });
-    function openModal(){ // simple hip modal
-      let m=document.getElementById('hipModal');
-      if(!m){ m=document.createElement('div'); m.id='hipModal'; m.className='modal open'; m.innerHTML=`<div class="paper"><div class="hip">길동꼬추 집들이 레츠기릿</div><div class="sub">화면을 탭하면 닫혀요 ✨</div></div>`; document.body.appendChild(m); }
-      m.classList.add('open'); m.addEventListener('click',()=> m.classList.remove('open'),{once:true});
-    }
+    // Title → open tab menu (no more hip text)
+    const tabMenu=$('#tabMenu');
+    $('#titleBtn').addEventListener('click',()=>{ tabMenu.classList.add('open'); });
+    tabMenu.addEventListener('click',e=>{ if(e.target===tabMenu) tabMenu.classList.remove('open'); });
+    $$('#tabMenu .sbtn').forEach(b=> b.addEventListener('click',()=>{ setTab(b.dataset.go); tabMenu.classList.remove('open'); }));
 
     // Start listeners
     ['food','game','todo'].forEach(listenCategory);
