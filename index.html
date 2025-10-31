@@ -17,8 +17,6 @@
       --muted: #a6adbb;
       --accent: #7c3aed; /* purple */
       --accent-2: #06b6d4; /* cyan */
-      --danger: #ef4444;
-      --success: #22c55e;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
       --radius: 18px;
     }
@@ -47,7 +45,7 @@
     /* Hint */
     .hint{ font-size:12px; color:var(--muted); margin: 0 2px 10px; font-family: inherit; }
 
-    /* Tab hero (아이콘 틀) */
+    /* Tab hero */
     .hero{ display:flex; align-items:center; gap:10px; margin: 4px 2px 10px; }
     .hero .icwrap{ width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); }
     .hero .hlabel{ font-weight:800; letter-spacing:-.2px; opacity:.92; }
@@ -67,8 +65,6 @@
     textarea{ min-height: 64px; resize: vertical; }
     input::placeholder, textarea::placeholder{ color:#8a90a2; font-family: inherit; }
     .btn{ border:none; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:white; padding:14px 16px; border-radius: 14px; font-weight:800; letter-spacing:.2px; cursor:pointer; box-shadow: 0 6px 20px rgba(124,58,237,.35); }
-    .btn:active{ transform: translateY(1px); }
-    .btn.secondary{ background:#0f1117; border:1px solid rgba(255,255,255,.14); box-shadow:none; font-weight:600; }
 
     /* List */
     .list{ display:flex; flex-direction:column; gap:8px; margin-top:10px; }
@@ -77,7 +73,6 @@
     .item .txt{ flex:1; font-weight:700; }
     .item .desc{ display:none; color:var(--muted); white-space:pre-wrap; line-height:1.5; }
     .item.open .desc{ display:block; }
-    .item.clickable{ cursor:pointer; }
     .actions{ display:flex; align-items:center; gap:8px; }
     .heart{ display:flex; gap:6px; align-items:center; border:1px solid rgba(255,255,255,.10); padding:8px 10px; border-radius:12px; cursor:pointer; }
     .heart[data-liked="true"]{ background: rgba(124,58,237,.18); border-color: rgba(124,58,237,.45); }
@@ -90,23 +85,12 @@
     /* Bottom Tabs */
     .tabs{ position: fixed; bottom: 10px; left: 0; right: 0; z-index: 30; display:flex; justify-content:center; }
     .tabs-inner{ display:flex; gap:8px; background: rgba(20,22,28,.85); border:1px solid rgba(255,255,255,.08); padding:8px; border-radius: 20px; backdrop-filter: blur(8px); box-shadow: var(--shadow); }
-    .tab{ flex:1; min-width: 72px; text-align:center; padding:10px 12px; border-radius:14px; color:var(--muted); font-weight:700; cursor:pointer; border:1px solid transparent; font-family: inherit; user-select:none; }
+    .tab{ flex:1; min-width: 72px; text-align:center; padding:10px 12px; border-radius:14px; color:var(--muted); font-weight:700; cursor:pointer; border:1px solid transparent; user-select:none; }
     .tab.active{ color:var(--text); background: rgba(124,58,237,.16); border-color: rgba(124,58,237,.35); }
-    .tab:focus{ outline: 2px solid rgba(124,58,237,.6); }
 
-    /* Modal */
-    .modal{ position: fixed; inset:0; display:none; place-items:center; background: rgba(0,0,0,.6); z-index: 50; }
-    .modal.open{ display:grid; }
-    .paper{ background: radial-gradient(120% 120% at 0% 0%, rgba(124,58,237,.25), rgba(255,255,255,.03)), #0f1117; color:var(--text); border:1px solid rgba(255,255,255,.10); border-radius: 24px; padding: 36px 28px; text-align:center; box-shadow: var(--shadow); }
-    .hip{ font-size: clamp(22px, 6vw, 36px); font-weight: 800; letter-spacing: -0.6px; line-height: 1.2; background: linear-gradient(90deg, #22d3ee, #a78bfa, #fb7185, #22d3ee); -webkit-background-clip: text; background-clip:text; color:transparent; animation: move 4s linear infinite; background-size: 300% 100%; }
-    @keyframes move{ 0%{ background-position:0% 50%; } 100%{ background-position:100% 50%; } }
-    .sub{ color:var(--muted); margin-top:10px; font-size:13px; }
-
-    /* Toast */
     .toast{ position: fixed; bottom: 76px; left:50%; transform: translateX(-50%); background: #111827; color:#e5e7eb; border:1px solid rgba(255,255,255,.10); padding:10px 14px; border-radius:12px; display:none; z-index: 60; box-shadow: var(--shadow); }
     .toast.show{ display:block; }
 
-    /* Confetti canvas */
     #confetti{ position: fixed; inset:0; z-index: 0; pointer-events:none; }
   </style>
 </head>
@@ -127,7 +111,6 @@
     </div>
     <div class="hint">각 항목을 클릭하면 설명을 볼 수 있습니다.</div>
 
-    <!-- Composer -->
     <div class="card" id="composer" style="display:none;">
       <div class="row" style="margin-bottom:8px;">
         <input id="newText" class="grow" type="text" maxlength="72" placeholder="항목" />
@@ -142,10 +125,8 @@
       </div>
     </div>
 
-    <!-- Lists -->
     <div class="list" id="list" style="display:none;"></div>
 
-    <!-- Rank (Top 3) -->
     <div id="rank" style="display:block; margin-top:10px;">
       <div class="grid">
         <div class="card"><h3 style="margin:0 0 8px;">🍽️ 음식 Top 3</h3><div id="r-food"></div></div>
@@ -155,30 +136,19 @@
     </div>
   </div>
 
-  <!-- Bottom Tabs -->
   <div class="tabs">
     <div class="tabs-inner">
-      <div class="tab active" data-tab="rank" role="button" tabindex="0">🏆 순위</div>
-      <div class="tab" data-tab="food" role="button" tabindex="0">🍽️ 음식</div>
-      <div class="tab" data-tab="game" role="button" tabindex="0">🎮 게임</div>
-      <div class="tab" data-tab="todo" role="button" tabindex="0">🧽 할일</div>
+      <div class="tab active" data-tab="rank">🏆 순위</div>
+      <div class="tab" data-tab="food">🍽️ 음식</div>
+      <div class="tab" data-tab="game">🎮 게임</div>
+      <div class="tab" data-tab="todo">🧽 할일</div>
     </div>
   </div>
 
-  <!-- Hip Modal -->
-  <div class="modal" id="hipModal" role="dialog" aria-modal="true">
-    <div class="paper">
-      <div class="hip">길동꼬추 집들이 레츠기릿</div>
-      <div class="sub">화면을 탭하면 닫혀요 ✨</div>
-    </div>
-  </div>
-
-  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
-  <!-- Firebase + App Script -->
   <script type="module">
-    // === ⚡ Firebase (Firestore + Auth) ===
+    // Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDaiXlINciVbsqUFqDyBbTzAQZQQ3mGk4M",
       authDomain: "hhcho-housewarming-party.firebaseapp.com",
@@ -187,234 +157,86 @@
       messagingSenderId: "467490140542",
       appId: "1:467490140542:web:111c6fc888a1994d37832f"
     };
-
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, doc, getDocs, onSnapshot, query, where, runTransaction, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, onSnapshot, query, where, serverTimestamp, deleteDoc, updateDoc, runTransaction, increment } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
     const appFB = initializeApp(firebaseConfig);
     const auth = getAuth(appFB);
     const db = getFirestore(appFB);
 
-    // === Util ===
-    const $ = sel => document.querySelector(sel);
-    const $$ = sel => Array.from(document.querySelectorAll(sel));
-    function toast(msg){ const el = $('#toast'); el.textContent = msg; el.classList.add('show'); setTimeout(()=> el.classList.remove('show'), 1800); }
-    function escapeText(t){ return (t||'').replace(/[&<>\"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;','\'':'&#39;'}[s])); }
-    async function sha256Hex(str){ const enc = new TextEncoder().encode(str); const buf = await crypto.subtle.digest('SHA-256', enc); return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join(''); }
+    // Utils
+    const $ = s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
+    const toast = m=>{ const t=$('#toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600); };
+    const esc = t=>(t||'').replace(/[&<>"']/g,s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[s]));
+    async function sha256Hex(str){ const enc=new TextEncoder().encode(str); const buf=await crypto.subtle.digest('SHA-256',enc); return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join(''); }
 
-    // === State ===
-    const state = {
-      tab: 'rank',
-      uid: null,
-      items: { food: [], game: [], todo: [] },
-      likedSet: new Set(),
-      unsub: { food: null, game: null, todo: null, likes: null },
-      confettiOn: false,
-    };
+    // State
+    const state={ tab:'rank', uid:null, items:{food:[],game:[],todo:[]}, likedSet:new Set(), unsub:{}, confettiOn:false };
 
-    // === Render ===
+    // Render
     function render(){
-      const heroMap = {
-        rank: {icon:'🏆', label:'순위'},
-        food: {icon:'🍽️', label:'음식', placeholder:'항목 (예 : 삼겹살 등)'},
-        game: {icon:'🎮', label:'게임', placeholder:'항목 (예 : 인디언포커 등)'},
-        todo: {icon:'🧽', label:'할일', placeholder:'항목 (예 : 식전 풋살 등)'}
-      };
-      $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab===state.tab));
-      const h = heroMap[state.tab] || heroMap.rank;
-      $('#heroIcon').textContent = h.icon;
-      $('#heroLabel').textContent = h.label;
-      if(h.placeholder){ $('#newText').placeholder = h.placeholder; $('#newDesc').placeholder = (state.tab==='game'?'게임방법 간단설명 (선택)':'간단설명 (선택)'); }
-
-      const isRank = state.tab === 'rank';
-      $('#composer').style.display = isRank ? 'none' : 'block';
-      $('#list').style.display = isRank ? 'none' : 'flex';
-      $('#rank').style.display = isRank ? 'block' : 'none';
-
-      if(!isRank){
-        const arr = [...state.items[state.tab]];
-        arr.sort((a,b)=> (b.heart - a.heart) || ((a.ts?.toMillis?.() ?? a.ts) - (b.ts?.toMillis?.() ?? b.ts)));
-        const list = $('#list'); list.innerHTML = '';
-        arr.forEach(item => list.appendChild(renderItem(item)));
-      } else {
-        renderRank();
-      }
+      const hero={rank:{icon:'🏆',label:'순위'}, food:{icon:'🍽️',label:'음식',ph:'항목 (예 : 삼겹살 등)'}, game:{icon:'🎮',label:'게임',ph:'항목 (예 : 인디언포커 등)'}, todo:{icon:'🧽',label:'할일',ph:'항목 (예 : 식전 풋살 등)'}};
+      $$('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===state.tab));
+      const h=hero[state.tab]; $('#heroIcon').textContent=h.icon; $('#heroLabel').textContent=h.label;
+      if(h.ph){ $('#newText').placeholder=h.ph; $('#newDesc').placeholder = (state.tab==='game'?'게임방법 간단설명 (선택)':'간단설명 (선택)'); }
+      const isRank=state.tab==='rank'; $('#composer').style.display=isRank?'none':'block'; $('#list').style.display=isRank?'none':'flex'; $('#rank').style.display=isRank?'block':'none';
+      if(!isRank){ const arr=[...state.items[state.tab]].sort((a,b)=> (b.heart-a.heart)||((a.ts?.toMillis?.()??a.ts)-(b.ts?.toMillis?.()??b.ts))); const list=$('#list'); list.innerHTML=''; arr.forEach(it=>list.appendChild(renderItem(it))); } else renderRank();
     }
 
-    function renderItem(item){
-      const wrap = document.createElement('div');
-      wrap.className = 'item clickable';
-      wrap.dataset.id = item.id;
-
-      const toprow = document.createElement('div');
-      toprow.className = 'toprow';
-
-      const txt = document.createElement('div');
-      txt.className = 'txt';
-      txt.textContent = item.text;
-
-      const actions = document.createElement('div'); actions.className='actions';
-
-      const heart = document.createElement('button');
-      heart.className='heart';
-      const liked = state.likedSet.has(item.id);
-      heart.dataset.liked = liked ? 'true' : 'false';
-      heart.innerHTML = liked ? `💜 <b>${item.heart||0}</b>` : `❤️ <b>${item.heart||0}</b>`;
-      heart.addEventListener('click', (e)=>{ e.stopPropagation(); toggleLike(item); });
-
-      const del = document.createElement('button');
-      del.className='del'; del.textContent = '🗑️ 삭제';
-      del.addEventListener('click', async (e)=>{ e.stopPropagation(); await tryDelete(item); });
-
-      actions.append(heart, del);
-      toprow.append(txt, actions);
-
-      const desc = document.createElement('div');
-      desc.className = 'desc';
-      desc.textContent = item.desc ? item.desc : '설명이 없어요';
-
-      wrap.append(toprow, desc);
-      wrap.addEventListener('click', ()=> wrap.classList.toggle('open'));
-      return wrap;
+    function renderItem(it){
+      const w=document.createElement('div'); w.className='item'; w.dataset.id=it.id; w.addEventListener('click',()=>w.classList.toggle('open'));
+      const top=document.createElement('div'); top.className='toprow';
+      const txt=document.createElement('div'); txt.className='txt'; txt.textContent=it.text;
+      const actions=document.createElement('div'); actions.className='actions';
+      const heart=document.createElement('button'); heart.className='heart'; const liked=state.likedSet.has(it.id); heart.dataset.liked=liked?'true':'false'; heart.innerHTML = (liked? '💜 ':'❤️ ') + `<b>${it.heart||0}</b>`; heart.addEventListener('click',e=>{ e.stopPropagation(); toggleLike(it); });
+      const del=document.createElement('button'); del.className='del'; del.textContent='🗑️ 삭제'; del.addEventListener('click',e=>{ e.stopPropagation(); tryDelete(it); });
+      actions.append(heart,del); top.append(txt,actions);
+      const desc=document.createElement('div'); desc.className='desc'; desc.textContent=it.desc||'설명이 없어요';
+      w.append(top,desc); return w;
     }
 
     function renderRank(){
-      const topHTML = (arr)=> [...arr].sort((a,b)=> (b.heart - a.heart) || ((a.ts?.toMillis?.() ?? a.ts) - (b.ts?.toMillis?.() ?? b.ts)))
-        .slice(0,3)
-        .map((x,i)=>`<div style="display:flex;align-items:center;gap:10px; margin:6px 0;">
-          <div style="width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-weight:800;">${i+1}</div>
-          <div style="flex:1;font-weight:700;">${escapeText(x.text)}</div>
-          <div style="opacity:.9;">❤️ ${x.heart||0}</div>
-        </div>`).join('') || '<div style="color:var(--muted)">아직 항목이 없어요.</div>';
-      $('#r-food').innerHTML = topHTML(state.items.food);
-      $('#r-game').innerHTML = topHTML(state.items.game);
-      $('#r-todo').innerHTML = topHTML(state.items.todo);
+      const top=(arr)=>[...arr].sort((a,b)=>(b.heart-a.heart)||((a.ts?.toMillis?.()??a.ts)-(b.ts?.toMillis?.()??b.ts))).slice(0,3).map((x,i)=>`<div style="display:flex;align-items:center;gap:10px;margin:6px 0;"><div style="width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-weight:800;">${i+1}</div><div style="flex:1;font-weight:700;">${esc(x.text)}</div><div>❤️ ${x.heart||0}</div></div>`).join('')||'<div style="color:#a6adbb">아직 항목이 없어요.</div>';
+      $('#r-food').innerHTML=top(state.items.food); $('#r-game').innerHTML=top(state.items.game); $('#r-todo').innerHTML=top(state.items.todo);
     }
 
-    // === Firestore Listeners ===
-    function listenCategory(cat){
-      if(state.unsub[cat]) state.unsub[cat]();
-      const q = query(collection(db,'items'), where('category','==',cat));
-      state.unsub[cat] = onSnapshot(q, snap => {
-        const arr = [];
-        snap.forEach(docu => arr.push({ id: docu.id, ...docu.data() }));
-        state.items[cat] = arr; render();
-      });
+    // Listeners
+    function listenCategory(cat){ if(state.unsub[cat]) state.unsub[cat](); const q=query(collection(db,'items'),where('category','==',cat)); state.unsub[cat]=onSnapshot(q,s=>{ const a=[]; s.forEach(d=>a.push({id:d.id,...d.data()})); state.items[cat]=a; render(); }); }
+    function listenLikes(){ if(state.unsub.likes) state.unsub.likes(); const ql=query(collection(db,'likes'),where('uid','==',state.uid)); state.unsub.likes=onSnapshot(ql,s=>{ const set=new Set(); s.forEach(d=>set.add(d.data().itemId)); state.likedSet=set; render(); }); }
+
+    // Actions
+    async function addItem(){ const text=$('#newText').value.trim(); const desc=$('#newDesc').value.trim(); if(!text){ toast('항목을 입력해주세요'); return; } const pin=prompt('삭제 시 사용할 4자리 비밀번호를 입력해 주세요'); if(pin===null) return; if(!/^\d{4}$/.test(pin)){ toast('4자리 숫자를 입력하세요'); return; } const pinHash=await sha256Hex(pin); const cat=state.tab; await addDoc(collection(db,'items'),{ text, desc, pinHash, heart:0, ts:serverTimestamp(), category:cat }); $('#newText').value=''; $('#newDesc').value=''; toast('등록 완료!'); }
+
+    // NEW: Like toggle without transaction using atomic increment
+    async function toggleLike(it){ try{ const likeRef=doc(db,'likes',`${it.id}_${state.uid}`); const itemRef=doc(db,'items',it.id); const likeSnap=await getDoc(likeRef); if(likeSnap.exists()){ await deleteDoc(likeRef); await updateDoc(itemRef,{ heart: increment(-1) }); } else { await addDoc(collection(db,'likes'), { itemId: it.id, uid: state.uid, ts: serverTimestamp() }); await updateDoc(itemRef,{ heart: increment(1) }); } } catch(e){ console.error(e); toast('하트를 반영하지 못했어요. 다시 시도해주세요.'); } }
+
+    // Admin-aware delete (PIN or admin 1111)
+    async function tryDelete(it){ const pinTry=prompt('해당 항목 비밀번호 (등록 시 설정한 4자리) 또는 관리자 1111'); if(pinTry===null) return; if(!/^\d{4}$/.test(pinTry)){ toast('4자리 숫자를 입력하세요'); return; } if(pinTry!=='1111'){ const hash=await sha256Hex(pinTry); if(hash!==it.pinHash){ toast('비밀번호가 올바르지 않습니다'); return; } } const likesSnap=await getDocs(query(collection(db,'likes'),where('itemId','==',it.id))); await Promise.allSettled(likesSnap.docs.map(d=>deleteDoc(d.ref))); await deleteDoc(doc(db,'items',it.id)); toast('삭제 완료'); }
+
+    // Tabs / Title / BG
+    const setTab=(t)=>{ state.tab=t; render(); };
+    $$('.tab').forEach(t=> t.addEventListener('click',()=>setTab(t.dataset.tab)));
+    $('#addBtn').addEventListener('click',addItem);
+    $('#newText').addEventListener('keydown',e=>{ if(e.key==='Enter') addItem(); });
+
+    // Title opens modal + goes to rank
+    $('#titleBtn').addEventListener('click',()=>{ setTab('rank'); openModal(); });
+    function openModal(){ // simple hip modal
+      let m=document.getElementById('hipModal');
+      if(!m){ m=document.createElement('div'); m.id='hipModal'; m.className='modal open'; m.innerHTML=`<div class="paper"><div class="hip">길동꼬추 집들이 레츠기릿</div><div class="sub">화면을 탭하면 닫혀요 ✨</div></div>`; document.body.appendChild(m); }
+      m.classList.add('open'); m.addEventListener('click',()=> m.classList.remove('open'),{once:true});
     }
 
-    function listenLikes(){
-      if(state.unsub.likes) state.unsub.likes();
-      const q = query(collection(db,'likes'), where('uid','==', state.uid));
-      state.unsub.likes = onSnapshot(q, snap => {
-        const set = new Set();
-        snap.forEach(d => set.add(d.data().itemId));
-        state.likedSet = set; render();
-      });
-    }
-
-    // === Actions ===
-    async function addItem(){
-      const input = $('#newText');
-      const descEl = $('#newDesc');
-      const text = (input.value||'').trim();
-      const desc = (descEl.value||'').trim();
-      if(!text){ toast('항목을 입력해주세요'); return; }
-      const pin = prompt('삭제 시 사용할 4자리 비밀번호를 입력해 주세요');
-      if(pin===null) return; // cancel
-      if(!/^\d{4}$/.test(pin)) { toast('4자리 숫자를 입력하세요'); return; }
-      const pinHash = await sha256Hex(pin);
-      const cat = state.tab; // food|game|todo
-      await addDoc(collection(db,'items'), { text, desc, pinHash, heart: 0, ts: serverTimestamp(), category: cat });
-      input.value=''; descEl.value='';
-      toast('등록 완료!');
-    }
-
-    async function toggleLike(item){
-      if(!state.uid){ toast('연결 중... 잠시 뒤 시도해주세요'); return; }
-      const likeId = `${item.id}_${state.uid}`;
-      const likeRef = doc(db,'likes', likeId);
-      const itemRef = doc(db,'items', item.id);
-      try{
-        await runTransaction(db, async (trx)=>{
-          const likeSnap = await trx.get(likeRef);
-          const itemSnap = await trx.get(itemRef);
-          if(!itemSnap.exists()) return;
-          const currentHeart = itemSnap.data().heart || 0;
-          if(likeSnap.exists()){
-            trx.delete(likeRef);
-            trx.update(itemRef, { heart: Math.max(0, currentHeart - 1) });
-          } else {
-            trx.set(likeRef, { itemId: item.id, uid: state.uid, ts: serverTimestamp() });
-            trx.update(itemRef, { heart: currentHeart + 1 });
-          }
-        });
-      } catch(e){ console.error(e); toast('하트를 반영하지 못했어요. 다시 시도해주세요.'); }
-    }
-
-    async function tryDelete(item){
-      const pinTry = prompt('해당 항목 비밀번호 (등록 시 설정한 4자리)');
-      if(pinTry===null) return;
-      if(!/^\d{4}$/.test(pinTry)) { toast('4자리 숫자를 입력하세요'); return; }
-      const hash = await sha256Hex(pinTry);
-      if(hash !== item.pinHash){ toast('비밀번호가 올바르지 않습니다'); return; }
-      const likesSnap = await getDocs(query(collection(db,'likes'), where('itemId','==', item.id)));
-      const deletes = likesSnap.docs.map(d=> deleteDoc(d.ref));
-      await Promise.allSettled(deletes);
-      await deleteDoc(doc(db,'items', item.id));
-      toast('삭제 완료');
-    }
-
-    // === Tab / UI wiring ===
-    function setTab(tab){ state.tab = tab; render(); }
-
-    $('#titleBtn').addEventListener('click', ()=> setTab('rank'));
-    $('#titleBtn').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ setTab('rank'); }});
-    $('#hipModal').addEventListener('click', ()=> $('#hipModal').classList.remove('open'));
-
-    $('#addBtn').addEventListener('click', addItem);
-    $('#newText').addEventListener('keydown', (e)=>{ if(e.key==='Enter') addItem(); });
-
-    $$('.tab').forEach(t=>{
-      t.addEventListener('click', ()=> setTab(t.dataset.tab));
-      t.addEventListener('keydown', (e)=>{ if(e.key==='Enter') setTab(t.dataset.tab); });
-    });
-
-    // Start listeners for all categories so 순위 탭도 항상 최신
-    listenCategory('food'); listenCategory('game'); listenCategory('todo');
-
-    // Auth → 좋아요 상태 동기화
+    // Start listeners
+    ['food','game','todo'].forEach(listenCategory);
     signInAnonymously(auth).catch(console.error);
-    onAuthStateChanged(auth, (user)=>{ if(user){ state.uid = user.uid; listenLikes(); } });
-
-    // Initial paint
+    onAuthStateChanged(auth,u=>{ if(u){ state.uid=u.uid; listenLikes(); } });
     render();
 
-    // === Confetti (toggle) ===
-    const cvs = document.getElementById('confetti');
-    const ctx = cvs.getContext('2d');
-    let W, H, rafId=null; function resize(){ W = cvs.width = innerWidth; H = cvs.height = innerHeight; }
-    addEventListener('resize', resize); resize();
-    const pieces = Array.from({length: 90}, ()=>({
-      x: Math.random()*W,
-      y: Math.random()*-H,
-      r: 4+Math.random()*4,
-      s: 0.5+Math.random()*1.5,
-      a: Math.random()*Math.PI*2,
-      hue: Math.floor(200+Math.random()*140)
-    }));
-    function step(){
-      ctx.clearRect(0,0,W,H);
-      pieces.forEach(p=>{
-        p.y += p.s*2; p.x += Math.sin(p.a+=0.02)*0.5; if(p.y>H+20){ p.y=-20; p.x=Math.random()*W; }
-        ctx.fillStyle = `hsl(${p.hue} 80% 60%)`;
-        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
-      });
-      rafId = requestAnimationFrame(step);
-    }
-    function startConfetti(){ if(rafId==null){ step(); $('#bgToggle').setAttribute('aria-pressed','true'); } }
-    function stopConfetti(){ if(rafId!=null){ cancelAnimationFrame(rafId); rafId=null; ctx.clearRect(0,0,W,H); $('#bgToggle').setAttribute('aria-pressed','false'); } }
-    $('#bgToggle').addEventListener('click', ()=>{ if(rafId==null) startConfetti(); else stopConfetti(); });
+    // Confetti toggle
+    const cvs=document.getElementById('confetti'); const ctx=cvs.getContext('2d'); let W,H,raf=null; function resize(){ W=cvs.width=innerWidth; H=cvs.height=innerHeight; } addEventListener('resize',resize); resize(); const parts=Array.from({length:90},()=>({x:Math.random()*W,y:Math.random()*-H,r:4+Math.random()*4,s:0.5+Math.random()*1.5,a:Math.random()*Math.PI*2,h:Math.floor(200+Math.random()*140)})); function loop(){ ctx.clearRect(0,0,W,H); parts.forEach(p=>{ p.y+=p.s*2; p.x+=Math.sin(p.a+=0.02)*0.5; if(p.y>H+20){ p.y=-20; p.x=Math.random()*W; } ctx.fillStyle=`hsl(${p.h} 80% 60%)`; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); }); raf=requestAnimationFrame(loop); }
+    const bgBtn=$('#bgToggle'); bgBtn.addEventListener('click',()=>{ if(raf){ cancelAnimationFrame(raf); raf=null; ctx.clearRect(0,0,W,H); bgBtn.setAttribute('aria-pressed','false'); } else { loop(); bgBtn.setAttribute('aria-pressed','true'); } });
   </script>
 </body>
 </html>
