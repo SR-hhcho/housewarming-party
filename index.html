@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>항현이 집들이</title>
-  <!-- Fonts: 구글 Noto Sans KR + Inter (깔끔한 토스/구글 느낌) -->
+  <!-- Fonts: Google Noto Sans KR + Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+KR:wght@400;600;800&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
       --danger: #ef4444;
       --success: #22c55e;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 20px;
+      --radius: 18px;
     }
     *{ box-sizing: border-box; }
     html,body{ height:100%; }
@@ -32,44 +32,49 @@
       font-family: Inter, "Noto Sans KR", system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, "Malgun Gothic", sans-serif;
       letter-spacing: -0.2px;
     }
-    .app{ max-width: 780px; margin: 0 auto; padding: 16px 16px 96px; }
+    .app{ max-width: 620px; margin: 0 auto; padding: 12px 12px 96px; }
 
     /* Header */
     .header{ position: sticky; top:0; z-index: 20; backdrop-filter: blur(8px);
       background: linear-gradient(180deg, rgba(11,12,16,.85), rgba(11,12,16,.55));
-      padding: 14px 16px; margin: -16px -16px 12px; border-bottom: 1px solid rgba(255,255,255,.06);
-      display:flex; align-items:center; justify-content:space-between; }
-    .title{ font-weight: 800; letter-spacing: -0.5px; cursor:pointer; display:flex; align-items:center; gap:10px; }
+      padding: 14px 16px; margin: -12px -12px 12px; border-bottom: 1px solid rgba(255,255,255,.06);
+      display:flex; align-items:center; justify-content:center; position: sticky; }
+    .title{ font-weight: 800; letter-spacing: -0.5px; cursor:pointer; display:inline-flex; align-items:center; gap:10px; }
     .title span{ background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip:text; color: transparent; }
-    .badge{ font-size: 11px; padding: 4px 8px; border-radius: 999px; background: rgba(124,58,237,.15); color:#d8c8ff; }
+    .badge{ position:absolute; right:10px; top:10px; font-size: 11px; padding: 6px 10px; border-radius: 999px; background: rgba(124,58,237,.15); color:#d8c8ff; border:1px solid rgba(255,255,255,.1); }
 
     /* Hint */
-    .hint{ font-size:12px; color:var(--muted); margin: 0 2px 10px; }
+    .hint{ font-size:12px; color:var(--muted); margin: 0 2px 10px; font-family: inherit; }
 
     /* Current Tab label */
-    .curtab{ font-size:13px; color:var(--muted); margin: 6px 2px 6px; }
+    .curtab{ display:none; }
+
+    /* Tab hero (아이콘 틀) */
+    .hero{ display:flex; align-items:center; gap:10px; margin: 6px 2px 12px; }
+    .hero .icwrap{ width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); }
+    .hero .hlabel{ font-weight:800; letter-spacing:-.2px; opacity:.92; }
 
     /* Card */
     .card{ background: linear-gradient(180deg, var(--card), var(--card-2)); border:1px solid rgba(255,255,255,.06);
       border-radius: var(--radius); padding:14px; box-shadow: var(--shadow); }
 
     /* Input Row */
-    .row{ display:flex; gap:10px; align-items: stretch; }
+    .row{ display:flex; gap:8px; align-items: stretch; }
     .row.wrap{ flex-wrap: wrap; }
     .row .grow{ flex:1; }
-    input[type="text"], input[type="number"], textarea{
+    input[type="text"], textarea{
       width:100%; background:#0f1117; color:var(--text); border:1px solid rgba(255,255,255,.12);
-      padding:14px 12px; border-radius: 14px; outline:none; font-size:15px;
+      padding:14px 12px; border-radius: 14px; outline:none; font-size:16px; font-family: inherit;
     }
-    textarea{ min-height: 88px; resize: vertical; }
-    input::placeholder, textarea::placeholder{ color:#8a90a2; }
+    textarea{ min-height: 64px; resize: vertical; }
+    input::placeholder, textarea::placeholder{ color:#8a90a2; font-family: inherit; }
     .btn{ border:none; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:white; padding:14px 16px; border-radius: 14px; font-weight:800; letter-spacing:.2px; cursor:pointer; box-shadow: 0 6px 20px rgba(124,58,237,.35); }
     .btn:active{ transform: translateY(1px); }
     .btn.secondary{ background:#0f1117; border:1px solid rgba(255,255,255,.14); box-shadow:none; font-weight:600; }
 
     /* List */
     .list{ display:flex; flex-direction:column; gap:10px; margin-top:12px; }
-    .item{ display:flex; flex-direction:column; gap:8px; padding:12px; border:1px solid rgba(255,255,255,.06); border-radius: 14px; background: rgba(255,255,255,.02); }
+    .item{ display:flex; flex-direction:column; gap:6px; padding:12px; border:1px solid rgba(255,255,255,.06); border-radius: 14px; background: rgba(255,255,255,.02); }
     .toprow{ display:flex; align-items:center; gap:10px; }
     .item .txt{ flex:1; font-weight:700; }
     .item .desc{ display:none; color:var(--muted); white-space:pre-wrap; line-height:1.5; }
@@ -83,12 +88,12 @@
 
     /* Top 3 grid */
     .grid{ display:grid; grid-template-columns: 1fr; gap:12px; }
-    @media (min-width: 560px){ .grid{ grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 560px){ .app{max-width: 680px;} .grid{ grid-template-columns: 1fr 1fr; } }
 
     /* Bottom Tabs */
     .tabs{ position: fixed; bottom: 12px; left: 0; right: 0; z-index: 30; display:flex; justify-content:center; pointer-events:none; }
     .tabs-inner{ pointer-events:auto; display:flex; gap:10px; background: rgba(20,22,28,.85); border:1px solid rgba(255,255,255,.08); padding:8px; border-radius: 20px; backdrop-filter: blur(8px); box-shadow: var(--shadow); }
-    .tab{ flex:1; min-width: 72px; text-align:center; padding:10px 12px; border-radius:14px; color:var(--muted); font-weight:700; cursor:pointer; border:1px solid transparent; }
+    .tab{ flex:1; min-width: 72px; text-align:center; padding:10px 12px; border-radius:14px; color:var(--muted); font-weight:700; cursor:pointer; border:1px solid transparent; font-family: inherit; }
     .tab.active{ color:var(--text); background: rgba(124,58,237,.16); border-color: rgba(124,58,237,.35); }
 
     /* Modal */
@@ -102,31 +107,37 @@
     /* Toast */
     .toast{ position: fixed; bottom: 78px; left:50%; transform: translateX(-50%); background: #111827; color:#e5e7eb; border:1px solid rgba(255,255,255,.10); padding:10px 14px; border-radius:12px; display:none; z-index: 60; box-shadow: var(--shadow); }
     .toast.show{ display:block; }
+
+    /* Confetti canvas */
+    #confetti{ position: fixed; inset:0; z-index: 0; pointer-events:none; }
   </style>
 </head>
 <body>
+  <canvas id="confetti"></canvas>
   <div class="header">
     <div class="title" id="titleBtn" aria-label="항현이 집들이">
       <span>항현이 집들이</span>
-      <div class="badge">Party Mode ✦</div>
     </div>
+    <div class="badge">Party Mode ✦</div>
   </div>
 
   <div class="app">
-    <div class="curtab" id="curTab">현재 탭: 먹거리</div>
+    <div class="hero" id="hero">
+      <div class="icwrap" id="heroIcon">🍽️</div>
+      <div class="hlabel" id="heroLabel">음식</div>
+    </div>
     <div class="hint">각 항목을 클릭하면 설명을 볼 수 있습니다.</div>
 
     <!-- Composer -->
     <div class="card" id="composer">
       <div class="row" style="margin-bottom:10px;">
         <input id="newText" class="grow" type="text" maxlength="72" placeholder="제목 (예: 삼겹살 / 마라탕 / 포커 / 설거지 담당)" />
-        <input id="pin" type="number" inputmode="numeric" pattern="\\d{4}" placeholder="4자리" title="4자리 비밀번호" />
         <button class="btn" id="addBtn">등록</button>
       </div>
       <div class="row wrap" style="gap:10px;">
-        <textarea id="newDesc" class="grow" placeholder="설명 (선택) — 예: 고기, 쌈채소, 콜라는 내가 사올게! 또는 게임 방식/룰, 할일 상세 등"></textarea>
+        <textarea id="newDesc" class="grow" placeholder="간단설명 (선택)"></textarea>
       </div>
-      <div style="font-size:12px; color:var(--muted); margin-top:6px;">항목마다 4자리 비밀번호를 설정합니다. 같은 번호로 해당 항목을 삭제할 수 있어요.</div>
+      <div style="font-size:12px; color:var(--muted); margin-top:6px;">등록 시 4자리 비밀번호를 입력하는 팝업이 뜹니다. 이 비밀번호는 삭제할 때 사용돼요.</div>
     </div>
 
     <!-- Lists -->
@@ -135,7 +146,7 @@
     <!-- Rank (Top 3) -->
     <div id="rank" style="display:none; margin-top:10px;">
       <div class="grid">
-        <div class="card"><h3 style="margin:0 0 8px;">🍽️ 먹거리 Top 3</h3><div id="r-food"></div></div>
+        <div class="card"><h3 style="margin:0 0 8px;">🍽️ 음식 Top 3</h3><div id="r-food"></div></div>
         <div class="card"><h3 style="margin:0 0 8px;">🎮 게임 Top 3</h3><div id="r-game"></div></div>
         <div class="card"><h3 style="margin:0 0 8px;">🧽 할일 Top 3</h3><div id="r-todo"></div></div>
       </div>
@@ -145,7 +156,7 @@
   <!-- Bottom Tabs -->
   <div class="tabs">
     <div class="tabs-inner">
-      <div class="tab active" data-tab="food">🍽️ 먹거리</div>
+      <div class="tab active" data-tab="food">🍽️ 음식</div>
       <div class="tab" data-tab="game">🎮 게임</div>
       <div class="tab" data-tab="todo">🧽 할일</div>
       <div class="tab" data-tab="rank">🏆 순위</div>
@@ -177,7 +188,7 @@
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, onSnapshot, query, where, orderBy, limit, runTransaction, serverTimestamp, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, doc, getDocs, onSnapshot, query, where, runTransaction, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const appFB = initializeApp(firebaseConfig);
     const auth = getAuth(appFB);
@@ -201,8 +212,16 @@
 
     // === Render ===
     function render(){
+      const heroMap = {
+        food: {icon:'🍽️', label:'음식', placeholder:'간단설명 (선택)'},
+        game: {icon:'🎮', label:'게임', placeholder:'게임방법 간단설명 (선택)'},
+        todo: {icon:'🧽', label:'할일', placeholder:'해야할 일 상세 (선택)'}
+      };
       $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab===state.tab));
-      $('#curTab').textContent = '현재 탭: ' + (state.tab==='food'?'먹거리': state.tab==='game'?'게임': state.tab==='todo'?'할일':'순위');
+      const h = heroMap[state.tab] || heroMap.food;
+      $('#heroIcon').textContent = h.icon;
+      $('#heroLabel').textContent = h.label;
+      $('#newDesc').placeholder = h.placeholder;
 
       const isRank = state.tab === 'rank';
       $('#composer').style.display = isRank ? 'none' : 'block';
@@ -271,14 +290,14 @@
     }
 
     // === Firestore Listeners ===
+    import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     function listenCategory(cat){
       if(state.unsub[cat]) state.unsub[cat]();
       const q = query(collection(db,'items'), where('category','==',cat));
       state.unsub[cat] = onSnapshot(q, snap => {
         const arr = [];
         snap.forEach(docu => arr.push({ id: docu.id, ...docu.data() }));
-        state.items[cat] = arr;
-        render();
+        state.items[cat] = arr; render();
       });
     }
 
@@ -296,16 +315,16 @@
     async function addItem(){
       const input = $('#newText');
       const descEl = $('#newDesc');
-      const pinEl = $('#pin');
       const text = (input.value||'').trim();
       const desc = (descEl.value||'').trim();
-      const pin = (pinEl.value||'').trim();
       if(!text){ toast('제목을 입력해주세요'); return; }
-      if(!/^\d{4}$/.test(pin)){ toast('4자리 비밀번호를 입력하세요'); return; }
+      const pin = prompt('삭제 시 사용할 4자리 비밀번호를 입력해 주세요');
+      if(pin===null) return; // cancel
+      if(!/^\d{4}$/.test(pin)) { toast('4자리 숫자를 입력하세요'); return; }
       const pinHash = await sha256Hex(pin);
       const cat = state.tab; // food|game|todo
       await addDoc(collection(db,'items'), { text, desc, pinHash, heart: 0, ts: serverTimestamp(), category: cat });
-      input.value=''; descEl.value=''; pinEl.value='';
+      input.value=''; descEl.value='';
       toast('등록 완료!');
     }
 
@@ -332,12 +351,11 @@
     }
 
     async function tryDelete(item){
-      const pinTry = prompt('해당 항목 비밀번호 (4자리)');
+      const pinTry = prompt('해당 항목 비밀번호 (등록 시 설정한 4자리)');
       if(pinTry===null) return;
       if(!/^\d{4}$/.test(pinTry)) { toast('4자리 숫자를 입력하세요'); return; }
       const hash = await sha256Hex(pinTry);
       if(hash !== item.pinHash){ toast('비밀번호가 올바르지 않습니다'); return; }
-      // delete likes of this item
       const likesSnap = await getDocs(query(collection(db,'likes'), where('itemId','==', item.id)));
       const deletes = likesSnap.docs.map(d=> deleteDoc(d.ref));
       await Promise.allSettled(deletes);
@@ -351,7 +369,6 @@
 
     $('#addBtn').addEventListener('click', addItem);
     $('#newText').addEventListener('keydown', (e)=>{ if(e.key==='Enter') addItem(); });
-    $('#pin').addEventListener('keydown', (e)=>{ if(e.key==='Enter') addItem(); });
 
     $$('.tab').forEach(t=> t.addEventListener('click', ()=>{ state.tab = t.dataset.tab; render(); }));
 
@@ -360,12 +377,34 @@
 
     // Auth → 좋아요 상태 동기화
     signInAnonymously(auth).catch(console.error);
-    onAuthStateChanged(auth, (user)=>{
-      if(user){ state.uid = user.uid; listenLikes(); }
-    });
+    onAuthStateChanged(auth, (user)=>{ if(user){ state.uid = user.uid; listenLikes(); } });
 
     // Initial paint
     render();
+
+    // === Confetti ===
+    const cvs = document.getElementById('confetti');
+    const ctx = cvs.getContext('2d');
+    let W, H; function resize(){ W = cvs.width = innerWidth; H = cvs.height = innerHeight; }
+    addEventListener('resize', resize); resize();
+    const pieces = Array.from({length: 90}, ()=>({
+      x: Math.random()*W,
+      y: Math.random()*-H,
+      r: 4+Math.random()*4,
+      s: 0.5+Math.random()*1.5,
+      a: Math.random()*Math.PI*2,
+      hue: Math.floor(200+Math.random()*140)
+    }));
+    function step(){
+      ctx.clearRect(0,0,W,H);
+      pieces.forEach(p=>{
+        p.y += p.s*2; p.x += Math.sin(p.a+=0.02)*0.5; if(p.y>H+20){ p.y=-20; p.x=Math.random()*W; }
+        ctx.fillStyle = `hsl(${p.hue} 80% 60%)`;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      });
+      requestAnimationFrame(step);
+    }
+    step();
   </script>
 </body>
 </html>
