@@ -46,8 +46,6 @@
     /* Hint */
     .hint{ font-size:12px; color:var(--muted); margin: 0 2px 10px; }
 
-    .admin-btn{ display:none; }
-
     /* Current Tab label */
     .curtab{ font-size:13px; color:var(--muted); margin: 6px 2px 6px; }
 
@@ -166,43 +164,45 @@
   <!-- Toast -->
   <div class="toast" id="toast"></div>
 
-  <script>
-    // ---- Data Layer ----
-    const STORE_KEY = 'houseparty_v2';
-    const LIKE_KEY  = 'houseparty_likes_v2'; // per-device liked item ids
-
-    const state = {
-      tab: 'food', // food | game | todo | rank
-      data: loadData(),
-      likes: loadLikes(),
+  <!-- Firebase + App Script -->
+  <script type="module">
+    // === ⚡ Firebase (Firestore + Auth) ===
+    // 1) 아래 config에 본인 Firebase 프로젝트 설정을 붙여 넣으세요.
+    //    (Firebase 콘솔 → 프로젝트 만들기 → Web App 추가 → SDK 설정에서 복사)
+    const firebaseConfig = {
+      apiKey: "PASTE_YOUR_API_KEY",
+      authDomain: "PASTE_YOUR_AUTH_DOMAIN",
+      projectId: "PASTE_YOUR_PROJECT_ID",
+      storageBucket: "PASTE_YOUR_STORAGE_BUCKET",
+      messagingSenderId: "PASTE_YOUR_SENDER_ID",
+      appId: "PASTE_YOUR_APP_ID"
     };
 
-    function loadData(){
-      try{ const raw = localStorage.getItem(STORE_KEY); return raw? JSON.parse(raw) : { food: [], game: [], todo: [] }; }
-      catch(e){ return { food: [], game: [], todo: [] }; }
-    }
-    function saveData(){ localStorage.setItem(STORE_KEY, JSON.stringify(state.data)); }
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, onSnapshot, query, where, orderBy, limit, runTransaction, serverTimestamp, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    function loadLikes(){
-      try{ const raw = localStorage.getItem(LIKE_KEY); return raw? new Set(JSON.parse(raw)) : new Set(); }
-      catch(e){ return new Set(); }
-    }
-    function saveLikes(){ localStorage.setItem(LIKE_KEY, JSON.stringify(Array.from(state.likes))); }
+    const appFB = initializeApp(firebaseConfig);
+    const auth = getAuth(appFB);
+    const db = getFirestore(appFB);
 
-    function uid(){ return Math.random().toString(36).slice(2, 10); }
-
-    // ---- UI Helpers ----
+    // === Util ===
     const $ = sel => document.querySelector(sel);
     const $$ = sel => Array.from(document.querySelectorAll(sel));
+    function toast(msg){ const el = $('#toast'); el.textContent = msg; el.classList.add('show'); setTimeout(()=> el.classList.remove('show'), 1800); }
+    function escapeText(t){ return (t||'').replace(/[&<>\"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;','\'':'&#39;'}[s])); }
+    async function sha256Hex(str){ const enc = new TextEncoder().encode(str); const buf = await crypto.subtle.digest('SHA-256', enc); return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join(''); }
 
-    function toast(msg){
-      const el = $('#toast'); el.textContent = msg; el.classList.add('show');
-      setTimeout(()=> el.classList.remove('show'), 1800);
-    }
+    // === State ===
+    const state = {
+      tab: 'food',
+      uid: null,
+      items: { food: [], game: [], todo: [] },
+      likedSet: new Set(),
+      unsub: { food: null, game: null, todo: null, likes: null },
+    };
 
-    function escapeText(t){ return t.replace(/[&<>\"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;','\'':'&#39;'}[s])); }
-
-    // ---- Rendering ----
+    // === Render ===
     function render(){
       $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab===state.tab));
       $('#curTab').textContent = '현재 탭: ' + (state.tab==='food'?'먹거리': state.tab==='game'?'게임': state.tab==='todo'?'할일':'순위');
@@ -213,8 +213,8 @@
       $('#rank').style.display = isRank ? 'block' : 'none';
 
       if(!isRank){
-        const arr = [...state.data[state.tab]];
-        arr.sort((a,b)=> (b.heart - a.heart) || (a.ts - b.ts));
+        const arr = [...state.items[state.tab]];
+        arr.sort((a,b)=> (b.heart - a.heart) || (a.ts?.toMillis?.() ?? a.ts) - (b.ts?.toMillis?.() ?? b.ts));
         const list = $('#list'); list.innerHTML = '';
         arr.forEach(item => list.appendChild(renderItem(item)));
       } else {
@@ -238,15 +238,15 @@
 
       const heart = document.createElement('button');
       heart.className='heart';
-      const liked = state.likes.has(item.id);
+      const liked = state.likedSet.has(item.id);
       heart.dataset.liked = liked ? 'true' : 'false';
-      heart.innerHTML = liked ? `💜 <b>${item.heart}</b>` : `❤️ <b>${item.heart}</b>`;
+      heart.innerHTML = liked ? `💜 <b>${item.heart||0}</b>` : `❤️ <b>${item.heart||0}</b>`;
       heart.setAttribute('aria-label','하트');
-      heart.addEventListener('click', (e)=>{ e.stopPropagation(); toggleLike(item.id); });
+      heart.addEventListener('click', (e)=>{ e.stopPropagation(); toggleLike(item); });
 
       const del = document.createElement('button');
       del.className='del'; del.innerHTML = '🗑️ 삭제';
-      del.addEventListener('click', (e)=>{ e.stopPropagation(); tryDelete(item.id); });
+      del.addEventListener('click', async (e)=>{ e.stopPropagation(); await tryDelete(item); });
 
       actions.append(heart, del);
       toprow.append(txt, actions);
@@ -256,77 +256,99 @@
       desc.textContent = item.desc ? item.desc : '설명이 없어요';
 
       wrap.append(toprow, desc);
-
-      // click to toggle description
       wrap.addEventListener('click', ()=> wrap.classList.toggle('open'));
-
       return wrap;
     }
 
     function renderRank(){
-      const topN = (arr)=> [...arr].sort((a,b)=> (b.heart-a.heart)||(a.ts-b.ts)).slice(0,3)
+      const topHTML = (arr)=> [...arr].sort((a,b)=> (b.heart - a.heart) || (a.ts?.toMillis?.() ?? a.ts) - (b.ts?.toMillis?.() ?? b.ts))
+        .slice(0,3)
         .map((x,i)=>`<div style="display:flex;align-items:center;gap:10px; margin:6px 0;">
           <div style="width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-weight:800;">${i+1}</div>
           <div style="flex:1;font-weight:700;">${escapeText(x.text)}</div>
-          <div style="opacity:.9;">❤️ ${x.heart}</div>
+          <div style="opacity:.9;">❤️ ${x.heart||0}</div>
         </div>`).join('') || '<div style="color:var(--muted)">아직 항목이 없어요.</div>';
-      $('#r-food').innerHTML = topN(state.data.food);
-      $('#r-game').innerHTML = topN(state.data.game);
-      $('#r-todo').innerHTML = topN(state.data.todo);
+      $('#r-food').innerHTML = topHTML(state.items.food);
+      $('#r-game').innerHTML = topHTML(state.items.game);
+      $('#r-todo').innerHTML = topHTML(state.items.todo);
     }
 
-    // ---- Actions ----
-    function addItem(){
+    // === Firestore Listeners ===
+    function listenCategory(cat){
+      if(state.unsub[cat]) state.unsub[cat]();
+      const q = query(collection(db,'items'), where('category','==',cat));
+      state.unsub[cat] = onSnapshot(q, snap => {
+        const arr = [];
+        snap.forEach(docu => arr.push({ id: docu.id, ...docu.data() }));
+        state.items[cat] = arr;
+        render();
+      });
+    }
+
+    function listenLikes(){
+      if(state.unsub.likes) state.unsub.likes();
+      const q = query(collection(db,'likes'), where('uid','==', state.uid));
+      state.unsub.likes = onSnapshot(q, snap => {
+        const set = new Set();
+        snap.forEach(d => set.add(d.data().itemId));
+        state.likedSet = set; render();
+      });
+    }
+
+    // === Actions ===
+    async function addItem(){
       const input = $('#newText');
       const descEl = $('#newDesc');
       const pinEl = $('#pin');
-      const text = (input.value || '').trim();
-      const desc = (descEl.value || '').trim();
-      const pin = (pinEl.value || '').trim();
+      const text = (input.value||'').trim();
+      const desc = (descEl.value||'').trim();
+      const pin = (pinEl.value||'').trim();
       if(!text){ toast('제목을 입력해주세요'); return; }
       if(!/^\d{4}$/.test(pin)){ toast('4자리 비밀번호를 입력하세요'); return; }
-      const item = { id: uid(), text, desc, pin, heart: 0, ts: Date.now() };
-      state.data[state.tab].push(item);
-      saveData(); input.value=''; pinEl.value=''; descEl.value='';
-      toast('등록 완료!'); render();
+      const pinHash = await sha256Hex(pin);
+      const cat = state.tab; // food|game|todo
+      await addDoc(collection(db,'items'), { text, desc, pinHash, heart: 0, ts: serverTimestamp(), category: cat });
+      input.value=''; descEl.value=''; pinEl.value='';
+      toast('등록 완료!');
     }
 
-    function toggleLike(id){
-      const arrAll = state.data.food.concat(state.data.game, state.data.todo);
-      const item = arrAll.find(x=> x.id===id); if(!item) return;
-      if(state.likes.has(id)){
-        // unlike
-        if(item.heart>0) item.heart -= 1;
-        state.likes.delete(id);
-        saveLikes(); saveData(); render();
-      } else {
-        // like
-        item.heart += 1; state.likes.add(id);
-        saveLikes(); saveData(); render();
-      }
-    }
-
-    function tryDelete(id){
-      const pinTry = prompt('해당 항목 비밀번호 (4자리)');
-      if(pinTry===null) return; // cancel
-      if(!/^\d{4}$/.test(pinTry)) { toast('4자리 숫자를 입력하세요'); return; }
-      const catKeys = ['food','game','todo'];
-      for(const k of catKeys){
-        const idx = state.data[k].findIndex(x=> x.id===id);
-        if(idx>-1){
-          if(state.data[k][idx].pin === pinTry){
-            state.data[k].splice(idx,1);
-            if(state.likes.has(id)) { state.likes.delete(id); saveLikes(); }
-            saveData(); toast('삭제 완료'); render();
+    async function toggleLike(item){
+      if(!state.uid){ toast('연결 중... 잠시 뒤 시도해주세요'); return; }
+      const likeId = `${item.id}_${state.uid}`;
+      const likeRef = doc(db,'likes', likeId);
+      const itemRef = doc(db,'items', item.id);
+      try{
+        await runTransaction(db, async (trx)=>{
+          const likeSnap = await trx.get(likeRef);
+          const itemSnap = await trx.get(itemRef);
+          if(!itemSnap.exists()) return;
+          const currentHeart = itemSnap.data().heart || 0;
+          if(likeSnap.exists()){
+            trx.delete(likeRef);
+            trx.update(itemRef, { heart: Math.max(0, currentHeart - 1) });
           } else {
-            toast('비밀번호가 올바르지 않습니다');
+            trx.set(likeRef, { itemId: item.id, uid: state.uid, ts: serverTimestamp() });
+            trx.update(itemRef, { heart: currentHeart + 1 });
           }
-          return;
-        }
-      }
+        });
+      } catch(e){ console.error(e); toast('하트를 반영하지 못했어요. 다시 시도해주세요.'); }
     }
 
-    // ---- Tab / UI wiring ----
+    async function tryDelete(item){
+      const pinTry = prompt('해당 항목 비밀번호 (4자리)');
+      if(pinTry===null) return;
+      if(!/^\d{4}$/.test(pinTry)) { toast('4자리 숫자를 입력하세요'); return; }
+      const hash = await sha256Hex(pinTry);
+      if(hash !== item.pinHash){ toast('비밀번호가 올바르지 않습니다'); return; }
+      // delete likes of this item
+      const likesSnap = await getDocs(query(collection(db,'likes'), where('itemId','==', item.id)));
+      const deletes = likesSnap.docs.map(d=> deleteDoc(d.ref));
+      await Promise.allSettled(deletes);
+      await deleteDoc(doc(db,'items', item.id));
+      toast('삭제 완료');
+    }
+
+    // === Wiring ===
     $('#titleBtn').addEventListener('click', ()=> $('#hipModal').classList.add('open'));
     $('#hipModal').addEventListener('click', ()=> $('#hipModal').classList.remove('open'));
 
@@ -335,6 +357,15 @@
     $('#pin').addEventListener('keydown', (e)=>{ if(e.key==='Enter') addItem(); });
 
     $$('.tab').forEach(t=> t.addEventListener('click', ()=>{ state.tab = t.dataset.tab; render(); }));
+
+    // Start listeners for all categories so 순위 탭도 항상 최신
+    listenCategory('food'); listenCategory('game'); listenCategory('todo');
+
+    // Auth → 좋아요 상태 동기화
+    signInAnonymously(auth).catch(console.error);
+    onAuthStateChanged(auth, (user)=>{
+      if(user){ state.uid = user.uid; listenLikes(); }
+    });
 
     // Initial paint
     render();
