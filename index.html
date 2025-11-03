@@ -93,6 +93,9 @@
     .pininput{width:100%;background:#0b0e14;color:var(--text);border:1px solid rgba(255,255,255,.15);padding:12px;border-radius:12px;font-size:16px;text-align:center}
     .rowr{display:flex;gap:10px}
     .rowr .sbtn{flex:1}
+
+    /* [CHG] 하트 아이콘 통일 – 항상 빨간색 */
+    .heart .heart-icon{ color:#ef4444; font-size:18px; line-height:1; }
   </style>
 </head>
 <body>
@@ -186,7 +189,8 @@
     import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
     import {
       getFirestore, collection, addDoc, doc, getDoc, getDocs, onSnapshot,
-      query, where, serverTimestamp, deleteDoc, updateDoc, increment, setDoc
+      query, where, serverTimestamp, deleteDoc, updateDoc, increment, setDoc,
+      runTransaction // [CHG] 트랜잭션 사용
     } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
     const appFB = initializeApp(firebaseConfig);
@@ -197,7 +201,7 @@
     const $ = s => document.querySelector(s);
     const $$ = s => Array.from(document.querySelectorAll(s));
     const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600); };
-    const esc = t => (t||'').replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[s]));
+    const esc = t => (t||'').replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;"," >":"&gt;","\"":"&quot;","'":"&#39;"}[s]));
     async function sha256Hex(str){ const enc=new TextEncoder().encode(str); const buf=await crypto.subtle.digest('SHA-256',enc); return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join(''); }
 
     // Custom PIN modal
@@ -250,10 +254,12 @@
       const txt = document.createElement('div'); txt.className='txt'; txt.textContent=it.text;
       const actions = document.createElement('div'); actions.className='actions';
 
+      // [CHG] 하트 UI – 빨간 테두리/채움 + 음수 표기 방지
       const heart = document.createElement('button'); heart.className='heart';
       const liked = state.likedSet.has(it.id);
+      const count = Math.max(0, it.heart || 0);              // [CHG] 0 미만 표기 방지
       heart.dataset.liked = liked ? 'true' : 'false';
-      heart.innerHTML = (liked ? '💜 ' : '❤️ ') + `<b>${it.heart||0}</b>`;
+      heart.innerHTML = `<span class="heart-icon">${liked ? '❤' : '♡'}</span> <b>${count}</b>`;
       heart.addEventListener('click',e=>{ e.stopPropagation(); toggleLike(it); });
 
       const del = document.createElement('button'); del.className='del'; del.textContent='🗑️ 삭제';
@@ -271,7 +277,7 @@
         .map((x,i)=>`<div style="display:flex;align-items:center;gap:10px;margin:6px 0;">
           <div style="width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-weight:800;">${i+1}</div>
           <div style="flex:1;font-weight:700;">${esc(x.text)}</div>
-          <div>❤️ ${x.heart||0}</div>
+          <div>❤️ ${Math.max(0, x.heart || 0)}</div>  <!-- [CHG] 순위 카드도 음수 표기 방지 -->
         </div>`).join('') || '<div style="color:#a6adbb">아직 항목이 없어요.</div>';
 
       $('#r-food').innerHTML = top(state.items.food);
@@ -312,22 +318,28 @@
       toast('등록 완료!');
     }
 
-    // ✅ Like toggle with deterministic doc ID
+    // [CHG] 하트 토글 – 트랜잭션으로 동시성/음수 방지 + 고정ID like 문서
     async function toggleLike(it){
       try{
         if(!state.uid){ toast('연결 중... 잠시 뒤 시도해주세요.'); return; }
         const likeId  = `${it.id}_${state.uid}`;
         const likeRef = doc(db,'likes', likeId);
         const itemRef = doc(db,'items', it.id);
-        const likeSnap = await getDoc(likeRef);
 
-        if(likeSnap.exists()){
-          await deleteDoc(likeRef);
-          await updateDoc(itemRef, { heart: increment(-1) });
-        } else {
-          await setDoc(likeRef, { itemId: it.id, uid: state.uid, ts: serverTimestamp() });
-          await updateDoc(itemRef, { heart: increment(1) });
-        }
+        await runTransaction(db, async (tx) => {
+          const [likeSnap, itemSnap] = await Promise.all([ tx.get(likeRef), tx.get(itemRef) ]);
+          if(!itemSnap.exists()) throw new Error('item-not-found');
+          const cur = itemSnap.data().heart || 0;
+
+          if(likeSnap.exists()){
+            const next = Math.max(0, cur - 1); // 음수 금지
+            tx.delete(likeRef);
+            tx.update(itemRef, { heart: next });
+          } else {
+            tx.set(likeRef, { itemId: it.id, uid: state.uid, ts: serverTimestamp() });
+            tx.update(itemRef, { heart: cur + 1 });
+          }
+        });
       } catch(e){
         console.error(e);
         toast('하트를 반영하지 못했어요. 다시 시도해주세요.');
