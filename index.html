@@ -78,7 +78,7 @@
     .heart[data-liked="true"]{ background: rgba(124,58,237,.18); border-color: rgba(124,58,237,.45); }
     .del{ border:1px solid rgba(255,255,255,.10); padding:8px 10px; border-radius:12px; cursor:pointer; }
 
-    /* Top 3 grid */
+    /* Top 5 grid */
     .grid{ display:grid; grid-template-columns: 1fr; gap:10px; }
     @media (min-width: 560px){ .app{max-width: 660px;} .grid{ grid-template-columns: 1fr 1fr; } }
 
@@ -143,9 +143,9 @@
 
     <div id="rank" style="display:block; margin-top:10px;">
       <div class="grid">
-        <div class="card"><h3 style="margin:0 0 8px;">🍽️ 음식 Top 3</h3><div id="r-food"></div></div>
-        <div class="card"><h3 style="margin:0 0 8px;">🎮 게임 Top 3</h3><div id="r-game"></div></div>
-        <div class="card"><h3 style="margin:0 0 8px;">🧽 할일 Top 3</h3><div id="r-todo"></div></div>
+        <div class="card"><h3 style="margin:0 0 8px;">🍽️ 음식 Top 5</h3><div id="r-food"></div></div>
+        <div class="card"><h3 style="margin:0 0 8px;">🎮 게임 Top 5</h3><div id="r-game"></div></div>
+        <div class="card"><h3 style="margin:0 0 8px;">🧽 할일 Top 5</h3><div id="r-todo"></div></div>
       </div>
     </div>
   </div>
@@ -197,7 +197,7 @@
     };
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
     import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, onSnapshot, query, where, serverTimestamp, deleteDoc, updateDoc, runTransaction, increment } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, onSnapshot, query, where, serverTimestamp, deleteDoc, updateDoc, runTransaction, increment, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
     const appFB = initializeApp(firebaseConfig);
     const auth = getAuth(appFB);
@@ -248,7 +248,7 @@
     }
 
     function renderRank(){
-      const top=(arr)=>[...arr].sort((a,b)=>(b.heart-a.heart)||((a.ts?.toMillis?.()??a.ts)-(b.ts?.toMillis?.()??b.ts))).slice(0,3).map((x,i)=>`<div style="display:flex;align-items:center;gap:10px;margin:6px 0;"><div style="width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-weight:800;">${i+1}</div><div style="flex:1;font-weight:700;">${esc(x.text)}</div><div>❤️ ${x.heart||0}</div></div>`).join('')||'<div style="color:#a6adbb">아직 항목이 없어요.</div>';
+      const top=(arr)=>[...arr].sort((a,b)=>(b.heart-a.heart)||((a.ts?.toMillis?.()??a.ts)-(b.ts?.toMillis?.()??b.ts))).slice(0,5).map((x,i)=>`<div style="display:flex;align-items:center;gap:10px;margin:6px 0;"><div style="width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-weight:800;">${i+1}</div><div style="flex:1;font-weight:700;">${esc(x.text)}</div><div>❤️ ${x.heart||0}</div></div>`).join('')||'<div style="color:#a6adbb">아직 항목이 없어요.</div>';
       $('#r-food').innerHTML=top(state.items.food); $('#r-game').innerHTML=top(state.items.game); $('#r-todo').innerHTML=top(state.items.todo);
     }
 
@@ -259,7 +259,35 @@
     // Actions
     async function addItem(){ const text=$('#newText').value.trim(); const desc=$('#newDesc').value.trim(); if(!text){ toast('항목을 입력해주세요'); return; } const pin=await askPin('삭제 시 사용할 4자리 비밀번호를 입력해 주세요.'); if(pin===null) return; if(!/^\d{4}$/.test(pin)){ toast('4자리 숫자를 입력하세요'); return; } const pinHash=await sha256Hex(pin); const cat=state.tab; await addDoc(collection(db,'items'),{ text, desc, pinHash, heart:0, ts:serverTimestamp(), category:cat }); $('#newText').value=''; $('#newDesc').value=''; toast('등록 완료!'); }
 
-    async function toggleLike(it){ try{ const likeId=`${it.id}_${state.uid}`; const likeRef=doc(db,'likes',likeId); const itemRef=doc(db,'items',it.id); const likeSnap=await getDoc(likeRef); if(likeSnap.exists()){ await deleteDoc(likeRef); await updateDoc(itemRef,{ heart: increment(-1) }); } else { await addDoc(collection(db,'likes'), { itemId: it.id, uid: state.uid, ts: serverTimestamp() }); await updateDoc(itemRef,{ heart: increment(1) }); } } catch(e){ console.error(e); toast('하트를 반영하지 못했어요. 다시 시도해주세요.'); } }
+    async function toggleLike(it){
+      try{
+        if(!state.uid){ toast('연결 중... 잠시 뒤 시도해주세요.'); return; }
+        const likeId = `${it.id}_${state.uid}`;
+        const likeRef = doc(db,'likes', likeId);
+        const itemRef = doc(db,'items', it.id);
+        const likeSnap = await getDoc(likeRef);
+        if(likeSnap.exists()){
+          await deleteDoc(likeRef);
+          await updateDoc(itemRef,{ heart: increment(-1) });
+        } else {
+          await setDoc(likeRef,{ itemId: it.id, uid: state.uid, ts: serverTimestamp() });
+          await updateDoc(itemRef,{ heart: increment(1) });
+        }
+      } catch(e){ console.error(e); toast('하트를 반영하지 못했어요. 다시 시도해주세요.'); }
+    }
+        const likeId = `${it.id}_${state.uid}`;
+        const likeRef = doc(db,'likes', likeId);
+        const itemRef = doc(db,'items', it.id);
+        const likeSnap = await getDoc(likeRef);
+        if(likeSnap.exists()){
+          await deleteDoc(likeRef);
+          await updateDoc(itemRef, { heart: increment(-1) });
+        } else {
+          await setDoc(likeRef, { itemId: it.id, uid: state.uid, ts: serverTimestamp() });
+          await updateDoc(itemRef, { heart: increment(1) });
+        }
+      } catch(e){ console.error(e); toast('하트를 반영하지 못했어요. 다시 시도해주세요.'); }
+    }
 
     async function tryDelete(it){ const pinTry=await askPin('설정한 비밀번호를 입력해 주세요.'); if(pinTry===null) return; if(!/^\d{4}$/.test(pinTry)){ toast('4자리 숫자를 입력하세요'); return; } if(pinTry!=='1111'){ const hash=await sha256Hex(pinTry); if(hash!==it.pinHash){ toast('비밀번호가 올바르지 않습니다'); return; } } const likesSnap=await getDocs(query(collection(db,'likes'),where('itemId','==',it.id))); await Promise.allSettled(likesSnap.docs.map(d=>deleteDoc(d.ref))); await deleteDoc(doc(db,'items',it.id)); toast('삭제 완료'); }
 
