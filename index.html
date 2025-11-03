@@ -4,108 +4,95 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>항현이 집들이</title>
-  <!-- Fonts: Google Noto Sans KR + Inter -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+KR:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg: #0b0c10;
-      --card: #14161c;
-      --card-2: #191c23;
-      --text: #eef2ff;
-      --muted: #a6adbb;
-      --accent: #7c3aed; /* purple */
-      --accent-2: #06b6d4; /* cyan */
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 18px;
+      --bg:#0b0c10; --card:#14161c; --card-2:#191c23; --text:#eef2ff; --muted:#a6adbb;
+      --accent:#7c3aed; --accent-2:#06b6d4; --shadow:0 10px 30px rgba(0,0,0,.35); --radius:18px;
     }
-    *{ box-sizing: border-box; }
-    html,body{ height:100%; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      margin:0; background: radial-gradient(1200px 600px at 80% -10%, rgba(124,58,237,.25), transparent 60%),
-                           radial-gradient(1000px 500px at -10% 100%, rgba(6,182,212,.20), transparent 60%),
-                           var(--bg);
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 80% -10%, rgba(124,58,237,.25), transparent 60%),
+        radial-gradient(1000px 500px at -10% 100%, rgba(6,182,212,.20), transparent 60%),
+        var(--bg);
       color:var(--text);
-      font-family: Inter, "Noto Sans KR", system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, "Malgun Gothic", sans-serif;
-      letter-spacing: -0.2px;
+      font-family:Inter,"Noto Sans KR",system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,"Malgun Gothic",sans-serif;
+      letter-spacing:-.2px;
     }
-    .app{ max-width: 600px; margin: 0 auto; padding: 10px 10px 96px; }
+    .app{max-width:600px;margin:0 auto;padding:10px 10px 96px}
 
     /* Header */
-    .header{ position: sticky; top:0; z-index: 20; backdrop-filter: blur(8px);
-      background: linear-gradient(180deg, rgba(11,12,16,.85), rgba(11,12,16,.55));
-      padding: 12px 12px; margin: -10px -10px 10px; border-bottom: 1px solid rgba(255,255,255,.06);
-      display:flex; align-items:center; justify-content:center; }
-    .title{ font-weight: 800; letter-spacing: -0.5px; cursor:pointer; display:inline-flex; align-items:center; gap:10px; }
-    .title span{ background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip:text; color: transparent; }
-    .badge{ position:absolute; right:10px; top:10px; font-size: 11px; padding: 6px 10px; border-radius: 999px; background: rgba(124,58,237,.15); color:#d8c8ff; border:1px solid rgba(255,255,255,.1); }
-    .bgbtn{ position:absolute; left:10px; top:10px; font-size: 12px; padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,.06); color:var(--text); border:1px solid rgba(255,255,255,.1); cursor:pointer; font-weight:700; }
+    .header{position:sticky;top:0;z-index:20;backdrop-filter:blur(8px);
+      background:linear-gradient(180deg,rgba(11,12,16,.85),rgba(11,12,16,.55));
+      padding:12px;margin:-10px -10px 10px;border-bottom:1px solid rgba(255,255,255,.06);
+      display:flex;align-items:center;justify-content:center}
+    .title{font-weight:800;letter-spacing:-.5px;cursor:pointer;display:inline-flex;align-items:center;gap:10px}
+    .title span{background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .badge{position:absolute;right:10px;top:10px;font-size:11px;padding:6px 10px;border-radius:999px;background:rgba(124,58,237,.15);color:#d8c8ff;border:1px solid rgba(255,255,255,.1)}
+    .bgbtn{position:absolute;left:10px;top:10px;font-size:12px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);color:var(--text);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-weight:700}
 
-    /* Hint */
-    .hint{ font-size:12px; color:var(--muted); margin: 0 2px 10px; font-family: inherit; }
+    .hint{font-size:12px;color:var(--muted);margin:0 2px 10px}
+    .hero{display:flex;align-items:center;gap:10px;margin:4px 2px 10px}
+    .hero .icwrap{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+    .hero .hlabel{font-weight:800;letter-spacing:-.2px;opacity:.92}
 
-    /* Tab hero */
-    .hero{ display:flex; align-items:center; gap:10px; margin: 4px 2px 10px; }
-    .hero .icwrap{ width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); }
-    .hero .hlabel{ font-weight:800; letter-spacing:-.2px; opacity:.92; }
+    .card{background:linear-gradient(180deg,var(--card),var(--card-2));border:1px solid rgba(255,255,255,.06);
+      border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
 
-    /* Card */
-    .card{ background: linear-gradient(180deg, var(--card), var(--card-2)); border:1px solid rgba(255,255,255,.06);
-      border-radius: var(--radius); padding:12px; box-shadow: var(--shadow); }
-
-    /* Input Row */
-    .row{ display:flex; gap:8px; align-items: stretch; }
-    .row.wrap{ flex-wrap: wrap; }
-    .row .grow{ flex:1; }
-    input[type="text"], textarea{
-      width:100%; background:#0f1117; color:var(--text); border:1px solid rgba(255,255,255,.12);
-      padding:14px 12px; border-radius: 14px; outline:none; font-size:16px; font-family: inherit;
+    .row{display:flex;gap:8px;align-items:stretch}
+    .row.wrap{flex-wrap:wrap}
+    .row .grow{flex:1}
+    input[type=text],textarea{
+      width:100%;background:#0f1117;color:var(--text);border:1px solid rgba(255,255,255,.12);
+      padding:14px 12px;border-radius:14px;outline:none;font-size:16px;font-family:inherit
     }
-    textarea{ min-height: 64px; resize: vertical; }
-    input::placeholder, textarea::placeholder{ color:#8a90a2; font-family: inherit; }
-    .btn{ border:none; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:white; padding:14px 16px; border-radius: 14px; font-weight:800; letter-spacing:.2px; cursor:pointer; box-shadow: 0 6px 20px rgba(124,58,237,.35); }
+    textarea{min-height:64px;resize:vertical}
+    input::placeholder,textarea::placeholder{color:#8a90a2}
+    .btn{border:none;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;padding:14px 16px;border-radius:14px;font-weight:800;letter-spacing:.2px;cursor:pointer;box-shadow:0 6px 20px rgba(124,58,237,.35)}
 
-    /* List */
-    .list{ display:flex; flex-direction:column; gap:8px; margin-top:10px; }
-    .item{ display:flex; flex-direction:column; gap:6px; padding:10px; border:1px solid rgba(255,255,255,.06); border-radius: 14px; background: rgba(255,255,255,.02); }
-    .toprow{ display:flex; align-items:center; gap:10px; }
-    .item .txt{ flex:1; font-weight:700; }
-    .item .desc{ display:none; color:var(--muted); white-space:pre-wrap; line-height:1.5; }
-    .item.open .desc{ display:block; }
-    .actions{ display:flex; align-items:center; gap:8px; }
-    .heart{ display:flex; gap:6px; align-items:center; border:1px solid rgba(255,255,255,.10); padding:8px 10px; border-radius:12px; cursor:pointer; }
-    .heart[data-liked="true"]{ background: rgba(124,58,237,.18); border-color: rgba(124,58,237,.45); }
-    .del{ border:1px solid rgba(255,255,255,.10); padding:8px 10px; border-radius:12px; cursor:pointer; }
+    .list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .item{display:flex;flex-direction:column;gap:6px;padding:10px;border:1px solid rgba(255,255,255,.06);border-radius:14px;background:rgba(255,255,255,.02)}
+    .toprow{display:flex;align-items:center;gap:10px}
+    .item .txt{flex:1;font-weight:700}
+    .item .desc{display:none;color:var(--muted);white-space:pre-wrap;line-height:1.5}
+    .item.open .desc{display:block}
+    .actions{display:flex;align-items:center;gap:8px}
+    .heart{display:flex;gap:6px;align-items:center;border:1px solid rgba(255,255,255,.10);padding:8px 10px;border-radius:12px;cursor:pointer}
+    .heart[data-liked=true]{background:rgba(124,58,237,.18);border-color:rgba(124,58,237,.45)}
+    .del{border:1px solid rgba(255,255,255,.10);padding:8px 10px;border-radius:12px;cursor:pointer}
 
-    /* Top 5 grid */
-    .grid{ display:grid; grid-template-columns: 1fr; gap:10px; }
-    @media (min-width: 560px){ .app{max-width: 660px;} .grid{ grid-template-columns: 1fr 1fr; } }
+    .grid{display:grid;grid-template-columns:1fr;gap:10px}
+    @media (min-width:560px){.app{max-width:660px}.grid{grid-template-columns:1fr 1fr}}
 
-    /* Bottom Tabs */
-    .tabs{ position: fixed; bottom: 10px; left: 0; right: 0; z-index: 30; display:flex; justify-content:center; }
-    .tabs-inner{ display:flex; gap:8px; background: rgba(20,22,28,.85); border:1px solid rgba(255,255,255,.08); padding:8px; border-radius: 20px; backdrop-filter: blur(8px); box-shadow: var(--shadow); }
-    .tab{ flex:1; min-width: 72px; text-align:center; padding:10px 12px; border-radius:14px; color:var(--muted); font-weight:700; cursor:pointer; border:1px solid transparent; user-select:none; }
-    .tab.active{ color:var(--text); background: rgba(124,58,237,.16); border-color: rgba(124,58,237,.35); }
+    .tabs{position:fixed;bottom:10px;left:0;right:0;z-index:30;display:flex;justify-content:center}
+    .tabs-inner{display:flex;gap:8px;background:rgba(20,22,28,.85);border:1px solid rgba(255,255,255,.08);padding:8px;border-radius:20px;backdrop-filter:blur(8px);box-shadow:var(--shadow)}
+    .tab{flex:1;min-width:72px;text-align:center;padding:10px 12px;border-radius:14px;color:var(--muted);font-weight:700;cursor:pointer;border:1px solid transparent;user-select:none}
+    .tab.active{color:var(--text);background:rgba(124,58,237,.16);border-color:rgba(124,58,237,.35)}
 
-    .toast{ position: fixed; bottom: 76px; left:50%; transform: translateX(-50%); background: #111827; color:#e5e7eb; border:1px solid rgba(255,255,255,.10); padding:10px 14px; border-radius:12px; display:none; z-index: 60; box-shadow: var(--shadow); }
-    .toast.show{ display:block; }
+    .toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:#111827;color:#e5e7eb;border:1px solid rgba(255,255,255,.10);padding:10px 14px;border-radius:12px;display:none;z-index:60;box-shadow:var(--shadow)}
+    .toast.show{display:block}
 
-    #confetti{ position: fixed; inset:0; z-index: 0; pointer-events:none; }
+    #confetti{position:fixed;inset:0;z-index:0;pointer-events:none}
 
-    /* Simple modal */
-    .modal{ position: fixed; inset:0; display:none; place-items:center; background: rgba(0,0,0,.6); z-index: 60; }
-    .modal.open{ display:grid; }
-    .sheet{ background: #0f1117; border:1px solid rgba(255,255,255,.1); border-radius: 18px; padding: 18px; min-width: 280px; box-shadow: var(--shadow); }
-    .grid4{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
-    .sbtn{ padding:12px; border-radius: 12px; background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:var(--text); font-weight:800; text-align:center; cursor:pointer; }
+    /* Simple modals */
+    .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.6);z-index:60}
+    .modal.open{display:grid}
+    .sheet{background:#0f1117;border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:18px;min-width:280px;box-shadow:var(--shadow)}
+    .grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .sbtn{padding:12px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);font-weight:800;text-align:center;cursor:pointer}
 
     /* PIN modal */
-    .pinbox{ display:flex; flex-direction:column; gap:10px; }
-    .pinbox h4{ margin:0 0 2px; font-size:16px; }
-    .pininput{ width:100%; background:#0b0e14; color:var(--text); border:1px solid rgba(255,255,255,.15); padding:12px; border-radius:12px; font-size:16px; text-align:center; }
-    .rowr{ display:flex; gap:10px; }
-    .rowr .sbtn{ flex:1; }
+    .pinbox{display:flex;flex-direction:column;gap:10px}
+    .pinbox h4{margin:0 0 2px;font-size:16px}
+    .pininput{width:100%;background:#0b0e14;color:var(--text);border:1px solid rgba(255,255,255,.15);padding:12px;border-radius:12px;font-size:16px;text-align:center}
+    .rowr{display:flex;gap:10px}
+    .rowr .sbtn{flex:1}
   </style>
 </head>
 <body>
@@ -133,7 +120,7 @@
       <div class="row wrap" style="gap:8px;">
         <textarea id="newDesc" class="grow" placeholder="간단설명 (선택)"></textarea>
       </div>
-      <div style="font-size:12px; color:var(--muted); margin-top:6px; line-height:1.4;">
+      <div style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4;">
         등록 시 4자리 비밀번호를 입력하는 팝업이 뜹니다.<br/>
         이 비밀번호는 삭제할 때 사용돼요.
       </div>
@@ -141,7 +128,7 @@
 
     <div class="list" id="list" style="display:none;"></div>
 
-    <div id="rank" style="display:block; margin-top:10px;">
+    <div id="rank" style="display:block;margin-top:10px;">
       <div class="grid">
         <div class="card"><h3 style="margin:0 0 8px;">🍽️ 음식 Top 5</h3><div id="r-food"></div></div>
         <div class="card"><h3 style="margin:0 0 8px;">🎮 게임 Top 5</h3><div id="r-game"></div></div>
@@ -173,7 +160,7 @@
     </div>
   </div>
 
-  <!-- PIN modal (custom) -->
+  <!-- PIN modal -->
   <div class="modal" id="pinModal">
     <div class="sheet pinbox">
       <h4 id="pinMsg">삭제 시 사용할 4자리 비밀번호를 입력해 주세요.</h4>
@@ -197,19 +184,23 @@
     };
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
     import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, onSnapshot, query, where, serverTimestamp, deleteDoc, updateDoc, runTransaction, increment, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+    import {
+      getFirestore, collection, addDoc, doc, getDoc, getDocs, onSnapshot,
+      query, where, serverTimestamp, deleteDoc, updateDoc, increment, setDoc
+    } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
     const appFB = initializeApp(firebaseConfig);
     const auth = getAuth(appFB);
     const db = getFirestore(appFB);
 
     // Utils
-    const $ = s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
-    const toast = m=>{ const t=$('#toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600); };
-    const esc = t=>(t||'').replace(/[&<>"']/g,s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[s]));
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600); };
+    const esc = t => (t||'').replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[s]));
     async function sha256Hex(str){ const enc=new TextEncoder().encode(str); const buf=await crypto.subtle.digest('SHA-256',enc); return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join(''); }
 
-    // Custom PIN prompt (to avoid browser origin text)
+    // Custom PIN modal
     function askPin(message){
       return new Promise(resolve=>{
         const modal=$('#pinModal'); const msg=$('#pinMsg'); const input=$('#pinInput');
@@ -223,62 +214,113 @@
     }
 
     // State
-    const state={ tab:'rank', uid:null, items:{food:[],game:[],todo:[]}, likedSet:new Set(), unsub:{}, confettiOn:false };
+    const state = { tab:'rank', uid:null, items:{food:[],game:[],todo:[]}, likedSet:new Set(), unsub:{}, confettiOn:false };
 
     // Render
     function render(){
-      const hero={rank:{icon:'🏆',label:'순위'}, food:{icon:'🍽️',label:'음식',ph:'항목 (예 : 삼겹살 등)'}, game:{icon:'🎮',label:'게임',ph:'항목 (예 : 인디언포커 등)'}, todo:{icon:'🧽',label:'할일',ph:'항목 (예 : 식전 풋살 등)'}};
-      $$('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===state.tab));
-      const h=hero[state.tab]; $('#heroIcon').textContent=h.icon; $('#heroLabel').textContent=h.label;
-      if(h.ph){ $('#newText').placeholder=h.ph; $('#newDesc').placeholder = (state.tab==='game'?'게임방법 간단설명 (선택)':'간단설명 (선택)'); }
-      const isRank=state.tab==='rank'; $('#composer').style.display=isRank?'none':'block'; $('#list').style.display=isRank?'none':'flex'; $('#rank').style.display=isRank?'block':'none';
-      if(!isRank){ const arr=[...state.items[state.tab]].sort((a,b)=> (b.heart-a.heart)||((a.ts?.toMillis?.()??a.ts)-(b.ts?.toMillis?.()??b.ts))); const list=$('#list'); list.innerHTML=''; arr.forEach(it=>list.appendChild(renderItem(it))); } else renderRank();
+      const hero = {
+        rank:{icon:'🏆',label:'순위'},
+        food:{icon:'🍽️',label:'음식',ph:'항목 (예 : 삼겹살 등)'},
+        game:{icon:'🎮',label:'게임',ph:'항목 (예 : 인디언포커 등)'},
+        todo:{icon:'🧽',label:'할일',ph:'항목 (예 : 식전 풋살 등)'}
+      };
+      $$('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===state.tab));
+      const h = hero[state.tab]; $('#heroIcon').textContent = h.icon; $('#heroLabel').textContent = h.label;
+      if(h.ph){ $('#newText').placeholder = h.ph; $('#newDesc').placeholder = (state.tab==='game'?'게임방법 간단설명 (선택)':'간단설명 (선택)'); }
+
+      const isRank = state.tab==='rank';
+      $('#composer').style.display = isRank ? 'none' : 'block';
+      $('#list').style.display     = isRank ? 'none' : 'flex';
+      $('#rank').style.display     = isRank ? 'block' : 'none';
+
+      if(!isRank){
+        const arr = [...state.items[state.tab]]
+          .sort((a,b)=>(b.heart-a.heart)||((a.ts?.toMillis?.()??a.ts)-(b.ts?.toMillis?.()??b.ts)));
+        const list = $('#list'); list.innerHTML='';
+        arr.forEach(it=> list.appendChild(renderItem(it)));
+      } else {
+        renderRank();
+      }
     }
 
     function renderItem(it){
-      const w=document.createElement('div'); w.className='item'; w.dataset.id=it.id; w.addEventListener('click',()=>w.classList.toggle('open'));
-      const top=document.createElement('div'); top.className='toprow';
-      const txt=document.createElement('div'); txt.className='txt'; txt.textContent=it.text;
-      const actions=document.createElement('div'); actions.className='actions';
-      const heart=document.createElement('button'); heart.className='heart'; const liked=state.likedSet.has(it.id); heart.dataset.liked=liked?'true':'false'; heart.innerHTML = (liked? '💜 ':'❤️ ') + `<b>${it.heart||0}</b>`; heart.addEventListener('click',e=>{ e.stopPropagation(); toggleLike(it); });
-      const del=document.createElement('button'); del.className='del'; del.textContent='🗑️ 삭제'; del.addEventListener('click',e=>{ e.stopPropagation(); tryDelete(it); });
+      const w = document.createElement('div'); w.className='item'; w.dataset.id=it.id;
+      w.addEventListener('click',()=> w.classList.toggle('open'));
+      const top = document.createElement('div'); top.className='toprow';
+      const txt = document.createElement('div'); txt.className='txt'; txt.textContent=it.text;
+      const actions = document.createElement('div'); actions.className='actions';
+
+      const heart = document.createElement('button'); heart.className='heart';
+      const liked = state.likedSet.has(it.id);
+      heart.dataset.liked = liked ? 'true' : 'false';
+      heart.innerHTML = (liked ? '💜 ' : '❤️ ') + `<b>${it.heart||0}</b>`;
+      heart.addEventListener('click',e=>{ e.stopPropagation(); toggleLike(it); });
+
+      const del = document.createElement('button'); del.className='del'; del.textContent='🗑️ 삭제';
+      del.addEventListener('click',e=>{ e.stopPropagation(); tryDelete(it); });
+
       actions.append(heart,del); top.append(txt,actions);
-      const desc=document.createElement('div'); desc.className='desc'; desc.textContent=it.desc||'설명이 없어요';
+      const desc = document.createElement('div'); desc.className='desc'; desc.textContent=it.desc||'설명이 없어요';
       w.append(top,desc); return w;
     }
 
     function renderRank(){
-      const top=(arr)=>[...arr].sort((a,b)=>(b.heart-a.heart)||((a.ts?.toMillis?.()??a.ts)-(b.ts?.toMillis?.()??b.ts))).slice(0,5).map((x,i)=>`<div style="display:flex;align-items:center;gap:10px;margin:6px 0;"><div style="width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-weight:800;">${i+1}</div><div style="flex:1;font-weight:700;">${esc(x.text)}</div><div>❤️ ${x.heart||0}</div></div>`).join('')||'<div style="color:#a6adbb">아직 항목이 없어요.</div>';
-      $('#r-food').innerHTML=top(state.items.food); $('#r-game').innerHTML=top(state.items.game); $('#r-todo').innerHTML=top(state.items.todo);
+      const top = (arr)=> [...arr]
+        .sort((a,b)=>(b.heart-a.heart)||((a.ts?.toMillis?.()??a.ts)-(b.ts?.toMillis?.()??b.ts)))
+        .slice(0,5)
+        .map((x,i)=>`<div style="display:flex;align-items:center;gap:10px;margin:6px 0;">
+          <div style="width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-weight:800;">${i+1}</div>
+          <div style="flex:1;font-weight:700;">${esc(x.text)}</div>
+          <div>❤️ ${x.heart||0}</div>
+        </div>`).join('') || '<div style="color:#a6adbb">아직 항목이 없어요.</div>';
+
+      $('#r-food').innerHTML = top(state.items.food);
+      $('#r-game').innerHTML = top(state.items.game);
+      $('#r-todo').innerHTML = top(state.items.todo);
     }
 
     // Firestore listeners
-    function listenCategory(cat){ if(state.unsub[cat]) state.unsub[cat](); const q=query(collection(db,'items'),where('category','==',cat)); state.unsub[cat]=onSnapshot(q,s=>{ const a=[]; s.forEach(d=>a.push({id:d.id,...d.data()})); state.items[cat]=a; render(); }); }
-    function listenLikes(){ if(state.unsub.likes) state.unsub.likes(); const ql=query(collection(db,'likes'),where('uid','==',state.uid)); state.unsub.likes=onSnapshot(ql,s=>{ const set=new Set(); s.forEach(d=>set.add(d.data().itemId)); state.likedSet=set; render(); }); }
+    function listenCategory(cat){
+      if(state.unsub[cat]) state.unsub[cat]();
+      const q = query(collection(db,'items'), where('category','==',cat));
+      state.unsub[cat] = onSnapshot(q, s=>{
+        const a=[]; s.forEach(d=> a.push({id:d.id, ...d.data()}));
+        state.items[cat] = a; render();
+      });
+    }
+    function listenLikes(){
+      if(state.unsub.likes) state.unsub.likes();
+      const ql = query(collection(db,'likes'), where('uid','==',state.uid));
+      state.unsub.likes = onSnapshot(ql, s=>{
+        const set = new Set(); s.forEach(d=> set.add(d.data().itemId));
+        state.likedSet = set; render();
+      });
+    }
 
     // Actions
-    async function addItem(){ const text=$('#newText').value.trim(); const desc=$('#newDesc').value.trim(); if(!text){ toast('항목을 입력해주세요'); return; } const pin=await askPin('삭제 시 사용할 4자리 비밀번호를 입력해 주세요.'); if(pin===null) return; if(!/^\d{4}$/.test(pin)){ toast('4자리 숫자를 입력하세요'); return; } const pinHash=await sha256Hex(pin); const cat=state.tab; await addDoc(collection(db,'items'),{ text, desc, pinHash, heart:0, ts:serverTimestamp(), category:cat }); $('#newText').value=''; $('#newDesc').value=''; toast('등록 완료!'); }
+    async function addItem(){
+      const text = $('#newText').value.trim();
+      const desc = $('#newDesc').value.trim();
+      if(!text){ toast('항목을 입력해주세요'); return; }
+      const pin = await askPin('삭제 시 사용할 4자리 비밀번호를 입력해 주세요.');
+      if(pin===null) return;
+      if(!/^\d{4}$/.test(pin)){ toast('4자리 숫자를 입력하세요'); return; }
+      const pinHash = await sha256Hex(pin);
+      const cat = state.tab; // food|game|todo
+      await addDoc(collection(db,'items'), { text, desc, pinHash, heart:0, ts:serverTimestamp(), category:cat });
+      $('#newText').value=''; $('#newDesc').value='';
+      toast('등록 완료!');
+    }
 
+    // ✅ Like toggle with deterministic doc ID
     async function toggleLike(it){
       try{
         if(!state.uid){ toast('연결 중... 잠시 뒤 시도해주세요.'); return; }
-        const likeId = `${it.id}_${state.uid}`;
+        const likeId  = `${it.id}_${state.uid}`;
         const likeRef = doc(db,'likes', likeId);
         const itemRef = doc(db,'items', it.id);
         const likeSnap = await getDoc(likeRef);
-        if(likeSnap.exists()){
-          await deleteDoc(likeRef);
-          await updateDoc(itemRef,{ heart: increment(-1) });
-        } else {
-          await setDoc(likeRef,{ itemId: it.id, uid: state.uid, ts: serverTimestamp() });
-          await updateDoc(itemRef,{ heart: increment(1) });
-        }
-      } catch(e){ console.error(e); toast('하트를 반영하지 못했어요. 다시 시도해주세요.'); }
-    }
-        const likeId = `${it.id}_${state.uid}`;
-        const likeRef = doc(db,'likes', likeId);
-        const itemRef = doc(db,'items', it.id);
-        const likeSnap = await getDoc(likeRef);
+
         if(likeSnap.exists()){
           await deleteDoc(likeRef);
           await updateDoc(itemRef, { heart: increment(-1) });
@@ -286,32 +328,56 @@
           await setDoc(likeRef, { itemId: it.id, uid: state.uid, ts: serverTimestamp() });
           await updateDoc(itemRef, { heart: increment(1) });
         }
-      } catch(e){ console.error(e); toast('하트를 반영하지 못했어요. 다시 시도해주세요.'); }
+      } catch(e){
+        console.error(e);
+        toast('하트를 반영하지 못했어요. 다시 시도해주세요.');
+      }
     }
 
-    async function tryDelete(it){ const pinTry=await askPin('설정한 비밀번호를 입력해 주세요.'); if(pinTry===null) return; if(!/^\d{4}$/.test(pinTry)){ toast('4자리 숫자를 입력하세요'); return; } if(pinTry!=='1111'){ const hash=await sha256Hex(pinTry); if(hash!==it.pinHash){ toast('비밀번호가 올바르지 않습니다'); return; } } const likesSnap=await getDocs(query(collection(db,'likes'),where('itemId','==',it.id))); await Promise.allSettled(likesSnap.docs.map(d=>deleteDoc(d.ref))); await deleteDoc(doc(db,'items',it.id)); toast('삭제 완료'); }
+    // Delete (PIN or admin 1111)
+    async function tryDelete(it){
+      const pinTry = await askPin('설정한 비밀번호를 입력해 주세요.');
+      if(pinTry===null) return;
+      if(!/^\d{4}$/.test(pinTry)){ toast('4자리 숫자를 입력하세요'); return; }
+      if(pinTry!=='1111'){
+        const hash = await sha256Hex(pinTry);
+        if(hash!==it.pinHash){ toast('비밀번호가 올바르지 않습니다'); return; }
+      }
+      const likesSnap = await getDocs(query(collection(db,'likes'), where('itemId','==', it.id)));
+      await Promise.allSettled(likesSnap.docs.map(d=> deleteDoc(d.ref)));
+      await deleteDoc(doc(db,'items', it.id));
+      toast('삭제 완료');
+    }
 
-    // Tab menu & wiring
-    const setTab=(t)=>{ state.tab=t; render(); };
-    $$('.tab').forEach(t=> t.addEventListener('click',()=>setTab(t.dataset.tab)));
-    $('#addBtn').addEventListener('click',addItem);
-    $('#newText').addEventListener('keydown',e=>{ if(e.key==='Enter') addItem(); });
+    // Tabs & UI
+    const setTab = (t)=>{ state.tab=t; render(); };
+    $$('.tab').forEach(t=> t.addEventListener('click', ()=> setTab(t.dataset.tab)));
+    $('#addBtn').addEventListener('click', addItem);
+    $('#newText').addEventListener('keydown', e=>{ if(e.key==='Enter') addItem(); });
 
-    // Title → open tab menu (no more hip text)
-    const tabMenu=$('#tabMenu');
-    $('#titleBtn').addEventListener('click',()=>{ tabMenu.classList.add('open'); });
-    tabMenu.addEventListener('click',e=>{ if(e.target===tabMenu) tabMenu.classList.remove('open'); });
-    $$('#tabMenu .sbtn').forEach(b=> b.addEventListener('click',()=>{ setTab(b.dataset.go); tabMenu.classList.remove('open'); }));
+    // Title → open tab menu
+    const tabMenu = $('#tabMenu');
+    $('#titleBtn').addEventListener('click', ()=> tabMenu.classList.add('open'));
+    tabMenu.addEventListener('click', e=>{ if(e.target===tabMenu) tabMenu.classList.remove('open'); });
+    $$('#tabMenu .sbtn').forEach(b=> b.addEventListener('click', ()=>{
+      setTab(b.dataset.go);
+      tabMenu.classList.remove('open');
+    }));
 
     // Start listeners
     ['food','game','todo'].forEach(listenCategory);
     signInAnonymously(auth).catch(console.error);
-    onAuthStateChanged(auth,u=>{ if(u){ state.uid=u.uid; listenLikes(); } });
+    onAuthStateChanged(auth, u=>{ if(u){ state.uid=u.uid; listenLikes(); } });
     render();
 
     // Confetti toggle
-    const cvs=document.getElementById('confetti'); const ctx=cvs.getContext('2d'); let W,H,raf=null; function resize(){ W=cvs.width=innerWidth; H=cvs.height=innerHeight; } addEventListener('resize',resize); resize(); const parts=Array.from({length:90},()=>({x:Math.random()*W,y:Math.random()*-H,r:4+Math.random()*4,s:0.5+Math.random()*1.5,a:Math.random()*Math.PI*2,h:Math.floor(200+Math.random()*140)})); function loop(){ ctx.clearRect(0,0,W,H); parts.forEach(p=>{ p.y+=p.s*2; p.x+=Math.sin(p.a+=0.02)*0.5; if(p.y>H+20){ p.y=-20; p.x=Math.random()*W; } ctx.fillStyle=`hsl(${p.h} 80% 60%)`; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); }); raf=requestAnimationFrame(loop); }
-    const bgBtn=$('#bgToggle'); bgBtn.addEventListener('click',()=>{ if(raf){ cancelAnimationFrame(raf); raf=null; ctx.clearRect(0,0,W,H); bgBtn.setAttribute('aria-pressed','false'); } else { loop(); bgBtn.setAttribute('aria-pressed','true'); } });
+    const cvs=document.getElementById('confetti'); const ctx=cvs.getContext('2d');
+    let W,H,raf=null; function resize(){ W=cvs.width=innerWidth; H=cvs.height=innerHeight; }
+    addEventListener('resize',resize); resize();
+    const parts=Array.from({length:90},()=>({x:Math.random()*W,y:Math.random()*-H,r:4+Math.random()*4,s:0.5+Math.random()*1.5,a:Math.random()*Math.PI*2,h:Math.floor(200+Math.random()*140)}));
+    function loop(){ ctx.clearRect(0,0,W,H); parts.forEach(p=>{ p.y+=p.s*2; p.x+=Math.sin(p.a+=0.02)*0.5; if(p.y>H+20){ p.y=-20; p.x=Math.random()*W; } ctx.fillStyle=`hsl(${p.h} 80% 60%)`; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); }); raf=requestAnimationFrame(loop); }
+    const bgBtn=$('#bgToggle');
+    bgBtn.addEventListener('click',()=>{ if(raf){ cancelAnimationFrame(raf); raf=null; ctx.clearRect(0,0,W,H); bgBtn.setAttribute('aria-pressed','false'); } else { loop(); bgBtn.setAttribute('aria-pressed','true'); } });
   </script>
 </body>
 </html>
