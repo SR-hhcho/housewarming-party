@@ -63,9 +63,23 @@
     .item .desc{display:none;color:var(--muted);white-space:pre-wrap;line-height:1.5}
     .item.open .desc{display:block}
     .actions{display:flex;align-items:center;gap:8px}
-    .heart{display:flex;gap:6px;align-items:center;border:1px solid rgba(255,255,255,.10);padding:8px 10px;border-radius:12px;cursor:pointer}
-    .heart[data-liked=true]{background:rgba(124,58,237,.18);border-color:rgba(124,58,237,.45)}
-    .del{border:1px solid rgba(255,255,255,.10);padding:8px 10px;border-radius:12px;cursor:pointer}
+.heart{
+  display:flex;gap:6px;align-items:center;
+  border:1px solid rgba(255,255,255,.10);
+  padding:8px 10px;border-radius:12px;cursor:pointer;
+}
+.heart[data-liked=true]{
+  background:transparent; /* 배경색 제거 */
+  border-color:rgba(255,255,255,.10);
+}
+/* 하트 아이콘은 빨간색, 숫자는 흰색 */
+.heart .heart-icon{color:#ef4444;font-size:18px;line-height:1;}
+.heart b{color:#ffffff;}
+.del{
+  border:1px solid rgba(255,255,255,.10);
+  padding:8px 10px;border-radius:12px;cursor:pointer;
+}
+
 
     .grid{display:grid;grid-template-columns:1fr;gap:10px}
     @media (min-width:560px){.app{max-width:660px}.grid{grid-template-columns:1fr 1fr}}
